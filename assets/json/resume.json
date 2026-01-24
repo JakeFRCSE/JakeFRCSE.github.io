@@ -1,17 +1,17 @@
 {
   "basics": {
-    "name": "Albert Einstein",
-    "label": "Scientist",
+    "name": "Junhyeok Park",
+    "label": "Researcher",
     "image": "",
-    "email": "einstein@example.com",
+    "email": "eppi001004@gmail.com",
     "phone": "(912) 123-4567",
-    "summary": "A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time",
+    "summary": "A mechanistic interpretability researcher, aiming for building trustworthy Large Language Models. ",
     "location": {
-      "address": "2712 Broadway St",
-      "postalCode": "CA 94115",
-      "city": "San Francisco",
-      "countryCode": "US",
-      "region": "California"
+      "address": "",
+      "postalCode": "",
+      "city": "Gunsan",
+      "countryCode": "KR",
+      "region": "North Jeolla"
     },
     "profiles": []
   },
