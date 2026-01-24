@@ -258,7 +258,7 @@ layout: default
         {% endif %}
 
         <!-- JSONResume Sections - Merge work and volunteer into Experience -->
-        {% assign empty_array = "" | split: "," %}
+        {% assign empty_array = '' | split: ',' %}
         {% assign work = site.data.resume.work | default: empty_array %}
         {% assign volunteer = site.data.resume.volunteer | default: empty_array %}
         {% assign combined_experience = work | concat: volunteer %}
