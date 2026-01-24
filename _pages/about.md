@@ -2,14 +2,14 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle: eppi001004@gmail.com.
 
 profile:
   align: left
   image: IMG_3289.JPG
   image_circular: true # crops the image to make it circular
   more_info: >
-    <p>Gunsan, South Korea</p>
+    <p>You can call me Jake!</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
@@ -25,8 +25,8 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a researcher who is interested in the field of Mechanistic Interpretability of Large Language Models. I am currently looking for a supervisor to work with me on research. If you need a research assistant, please contact me.
+I am a researcher who is interested in Mechanistic Interpretability. I am currently looking for a research supervisor. If you need a research assistant, please contact me.
 
 Previously, I completed a research internship at SAILAB @ KAIST AI, mentored by Cheongwoong Kang, a PhD candidate at KAIST. During the internship, I worked on the inconsistency of LLMs by analyzing hidden states using vocabulary projection.
 
-I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones? 2. How do features combine during internal computation? I know these questions are not easy to answer, but I am willing to learn and explore!
+I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones more efficiently? 2. Is there a consistent rule for how features combine during internal computation? I know these questions are not easy to answer, but I am willing to learn and explore!

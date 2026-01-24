@@ -14,5 +14,5 @@ profiles:
     content: about.md
     image_circular: true # crops the image to make it circular
     more_info: >
-      <p>Gunsan, South Korea</p>
+      <p>You can call me Jake!</p>
 ---
