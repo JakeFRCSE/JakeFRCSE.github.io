@@ -6,7 +6,7 @@ subtitle: eppi001004@gmail.com.
 
 profile:
   align: left
-  image: IMG_3289.JPG
+  image: IMG_0007.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
     <p>You can call me Jake!</p>
