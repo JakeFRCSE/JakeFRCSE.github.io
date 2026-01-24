@@ -9,7 +9,7 @@ profile:
   image: IMG_0007.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
-    <p>You can call me Jake!</p>
+    <p>Hi, You can call me Jake!</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
