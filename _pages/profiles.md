@@ -3,7 +3,7 @@ layout: profiles
 permalink: /people/
 title: people
 description: Junhyeok Park
-nav: true
+nav: false
 nav_order: 7
 
 profiles:
@@ -14,5 +14,5 @@ profiles:
     content: about.md
     image_circular: true # crops the image to make it circular
     more_info: >
-      <p>You can call me Jake!</p>
+      <p></p>
 ---
