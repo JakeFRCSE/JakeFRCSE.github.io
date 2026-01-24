@@ -1,9 +1,9 @@
-github_users: 
+github_users:
   - JakeFRCSE
 #  - your-github-username
 
 repo_description_lines_max: 2
 
-github_repos: 
+github_repos:
   - JakeFRCSE/KAIRI_2025_Summer
 #  - username/repo-name
