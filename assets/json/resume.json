@@ -72,27 +72,16 @@
   ],
   "education": [
     {
-      "institution": "University of Zurich",
-      "location": "Zurich, Switzerland",
-      "url": "https://www.uzh.ch/",
-      "area": "Physics",
-      "studyType": "PhD",
-      "startDate": "1900-01-01",
-      "endDate": "1905-01-01",
-      "score": "",
-      "courses": ["Theory of Relativity"],
-      "highlights": ["Description 1.", "Description 2."]
-    },
-    {
-      "institution": "Eidgenössische Technische Hochschule",
-      "location": "Zurich, Switzerland",
-      "area": "Physics",
-      "studyType": "Federal teaching diploma",
-      "startDate": "1896-01-01",
-      "endDate": "1900-01-01",
-      "score": "",
+      "institution": "Pusan National University",
+      "location": "Busan, South Korea",
+      "url": "https://www.pusan.ac.kr/",
+      "area": "Computer Science and Engineering, French Language and Literature",
+      "studyType": "Bachelor",
+      "startDate": "2020-03-02",
+      "endDate": "2026-02-20",
+      "score": "4.32/4.5",
       "courses": [],
-      "highlights": ["Description 1.", "Description 2."]
+      "highlights": ["Summa Cum Laude (GPA: 4.32/4.5)"]
     }
   ],
   "awards": [
