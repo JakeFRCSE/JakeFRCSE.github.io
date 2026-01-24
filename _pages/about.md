@@ -29,4 +29,4 @@ I am a researcher who is interested in the field of Mechanistic Interpretability
 
 Previously, I completed a research internship at SAILAB @ KAIST AI, mentored by Cheongwoong Kang, a PhD candidate at KAIST. During the internship, I worked on the inconsistency of LLMs by analyzing hidden states using vocabulary projection.
 
-I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones? 2. How do features combine during internal computation?  I know these questions are not easy to answer, but I am willing to learn and explore!
+I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones? 2. How do features combine during internal computation? I know these questions are not easy to answer, but I am willing to learn and explore!
