@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: eppi001004@gmail.com.
+subtitle: 
 
 profile:
   align: left
@@ -25,8 +25,8 @@ latest_posts:
   limit: 1 # leave blank to include all the blog posts
 ---
 
-I am a researcher who is interested in Mechanistic Interpretability. I am currently looking for a research supervisor. If you need a research assistant, please contact me.
+I am a researcher who is interested in Mechanistic Interpretability. I am currently looking for a research supervisor. If you need a research assistant, please [contact me](mailto:eppi001004@gmail.com).
 
 Previously, I completed a research internship at SAILAB @ KAIST AI, mentored by Cheongwoong Kang, a PhD candidate at KAIST. During the internship, I worked on the inconsistency of LLMs by analyzing hidden states using vocabulary projection.
 
-I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones more efficiently? 2. Is there a consistent rule for how features combine during internal computation? I know these questions are not easy to answer, but I am willing to learn and explore!
+I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones more efficiently? 2. Is there a consistent rule for how features combine during internal computation? I know these questions are not easy to answer, but I am eager to learn and explore!
