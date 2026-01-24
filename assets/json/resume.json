@@ -50,14 +50,7 @@
       "name": "Python",
       "level": "Advanced",
       "icon": "fa-solid fa-hashtag",
-      "keywords": [
-        "Python",
-        "PyTorch",
-        "Pandas",
-        "NumPy",
-        "Matplotlib",
-        "Seaborn"
-      ]
+      "keywords": ["Python", "PyTorch", "Pandas", "NumPy", "Matplotlib", "Seaborn"]
     }
   ],
   "languages": [
@@ -81,12 +74,7 @@
     {
       "name": "Interpretability",
       "icon": "fa-solid fa-tag",
-      "keywords": [
-        "SAE",
-        "Feature Faithfulness",
-        "Circuit Discovery",
-        "Failure Analysis"
-      ]
+      "keywords": ["SAE", "Feature Faithfulness", "Circuit Discovery", "Failure Analysis"]
     }
   ]
 }
