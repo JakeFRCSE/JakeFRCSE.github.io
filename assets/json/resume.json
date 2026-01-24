@@ -4,14 +4,10 @@
     "label": "Researcher",
     "image": "",
     "email": "eppi001004@gmail.com",
-    "phone": "(912) 123-4567",
     "summary": "A mechanistic interpretability researcher, aiming for building trustworthy Large Language Models. ",
     "location": {
-      "address": "",
-      "postalCode": "",
       "city": "Gunsan",
       "countryCode": "KR",
-      "region": "North Jeolla"
     },
     "profiles": []
   },
