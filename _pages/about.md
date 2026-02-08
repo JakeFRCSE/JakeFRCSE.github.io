@@ -6,7 +6,7 @@ subtitle:
 
 profile:
   align: left
-  image: IMG_4313.heic
+  image: IMG_4353.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
     <p>Busan, South Korea</p>

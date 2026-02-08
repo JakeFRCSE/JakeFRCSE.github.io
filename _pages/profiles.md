@@ -10,7 +10,7 @@ profiles:
   # if you want to include more than one profile, just replicate the following block
   # and create one content file for each profile inside _pages/
   - align: right
-    image: IMG_4313.heic
+    image: IMG_4353.jpg
     content: about.md
     image_circular: true # crops the image to make it circular
     more_info: >
