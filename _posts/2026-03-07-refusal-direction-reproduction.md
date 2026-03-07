@@ -2,9 +2,10 @@
 layout: post
 title: Reproduction of Refusal Direction in LLMs
 date: 2026-03-07
-description: Notes on reproducing "Refusal in Language Models Is Mediated by a Single Direction" with causal interventions on the residual stream.
-tags: mechanistic-interpretability causal-interventions
+description: Notes on reproducing "Refusal in Language Models Is Mediated by a Single Direction" with causal intervention on the residual stream.
+tags: mechanistic-interpretability causal-intervention
 categories: exploratory
+thumbnail: /assets/img/gemma-2b-itrefusal_fig3_reproduce.png
 ---
 
 ## Motivation
