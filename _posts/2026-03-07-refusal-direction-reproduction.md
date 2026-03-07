@@ -84,7 +84,7 @@ Code:
 
 [Describe what you observed]
 
-![result](/assets/img/gemma-2b-itrefusal_fig3_reproduce.png)
+<img src="/assets/img/gemma-2b-itrefusal_fig3_reproduce.png" alt="Result: refusal scores for harmless (induced) and harmful (bypassed) prompts" style="max-width: 100%; width: 560px;">
 
 [Explain the result]
 
