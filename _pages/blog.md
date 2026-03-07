@@ -126,12 +126,14 @@ pagination:
 
 <div class="row align-items-stretch">
   <div class="col-sm-4 col-md-3">
-    <img
-      class="card-img"
-      src="{{ post.thumbnail | relative_url }}"
-      style="object-fit: cover; width: 100%; height: 100%; display: block"
-      alt="image"
-    >
+    <a href="{{ post.url | relative_url }}">
+      <img
+        class="card-img"
+        src="{{ post.thumbnail | relative_url }}"
+        style="object-fit: contain; width: 100%; height: auto; max-height: 200px; display: block"
+        alt="image"
+      >
+    </a>
   </div>
   <div class="col-sm-8 col-md-9">
 {% endif %}
