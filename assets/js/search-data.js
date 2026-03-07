@@ -48,7 +48,7 @@ ninja.data = [{
         
           title: "Reproduction of Refusal Direction in LLMs",
         
-        description: "Notes on reproducing &quot;Refusal in Language Models Is Mediated by a Single Direction&quot; with causal interventions on the residual stream.",
+        description: "Notes on reproducing &quot;Refusal in Language Models Is Mediated by a Single Direction&quot; with causal intervention on the residual stream.",
         section: "Posts",
         handler: () => {
           
