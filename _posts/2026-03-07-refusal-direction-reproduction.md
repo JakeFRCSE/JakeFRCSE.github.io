@@ -7,7 +7,6 @@ tags: mechanistic-interpretability causal-interventions
 categories: exploratory
 ---
 
-
 ## Motivation
 
 Large language models are trained to refuse harmful requests through post-training techniques such as safety fine-tuning. However, these safeguards are not always reliable, and models may still produce harmful responses in certain situations.
@@ -16,8 +15,7 @@ Meanwhile, recent progress in mechanistic interpretability suggests that some co
 
 If this is the case, it raises an interesting possibility: rather than relying solely on post-training alignment, we might be able to induce or suppress refusal behaviors by directly manipulating the model's internal representations.
 
-*Refusal in Language Models Is Mediated by a Single Direction* explores this idea. In this post, I reproduce its experiment to see how the method works in practice.
-
+_Refusal in Language Models Is Mediated by a Single Direction_ explores this idea. In this post, I reproduce its experiment to see how the method works in practice.
 
 ## Core Idea
 
@@ -30,7 +28,6 @@ Conceptually:
 ```
 
 [Explain what this idea implies]
-
 
 ## Experimental Setup
 
@@ -70,7 +67,6 @@ Conceptually:
 
 [Explanation]
 
-
 ## Implementation
 
 [Briefly describe your setup]
@@ -84,7 +80,6 @@ Conceptually:
 Code:  
 [GitHub link]
 
-
 ## Result
 
 [Describe what you observed]
@@ -93,13 +88,11 @@ Code:
 
 [Explain the result]
 
-
 ## Interpretation
 
 [What the result suggests]
 
 [Connection to the paper's hypothesis]
-
 
 ## Reflection
 
@@ -108,8 +101,6 @@ Code:
 [What you found interesting]
 
 [Possible future questions]
-
-
 
 I reproduced the main experiment from the paper **"Refusal in Language Models Is Mediated by a Single Direction"** ([arXiv:2406.11717](https://arxiv.org/pdf/2406.11717)). This post summarizes the setup and findings.
 
