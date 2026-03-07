@@ -44,7 +44,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "books-the-godfather",
+        },{id: "post-reproduction-of-refusal-direction-in-llms",
+        
+          title: "Reproduction of Refusal Direction in LLMs",
+        
+        description: "Notes on reproducing &quot;Refusal in Language Models Is Mediated by a Single Direction&quot; with causal interventions on the residual stream.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/refusal-direction-reproduction/";
+          
+        },
+      },{id: "books-the-godfather",
           title: 'The Godfather',
           description: "",
           section: "Books",handler: () => {
