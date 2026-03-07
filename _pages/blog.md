@@ -183,6 +183,7 @@ pagination:
     </p>
 
 {% if post.thumbnail %}
+
   </div>
 </div>
 {% endif %}
