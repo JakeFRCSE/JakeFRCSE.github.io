@@ -52,7 +52,12 @@ ninja.data = [{
             },},{id: "news-setting-up-my-personal-website",
           title: 'Setting up my personal website!',
           description: "",
-          section: "News",},{id: "teachings-data-science-fundamentals",
+          section: "News",},{id: "projects-refusal-direction-in-llms",
+          title: 'Refusal Direction in LLMs',
+          description: "Reproduction of “Refusal in Language Models Is Mediated by a Single Direction” with causal interventions on the residual stream.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/refusal-direction-reproduction/";
+            },},{id: "teachings-data-science-fundamentals",
           title: 'Data Science Fundamentals',
           description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
           section: "Teachings",handler: () => {
