@@ -84,7 +84,7 @@ Code:
 
 [Describe what you observed]
 
-![result](results/[image-name].png)
+![result](/assets/img/gemma-2b-itrefusal_fig3_reproduce.png)
 
 [Explain the result]
 
