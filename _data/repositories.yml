@@ -5,6 +5,6 @@ github_users:
 repo_description_lines_max: 2
 
 github_repos:
-  - JakeFRCSE/KAIRI_2025_Summer
   - JakeFRCSE/refusal-direction-reproduction
+  - JakeFRCSE/KAIRI_2025_Summer
 #  - username/repo-name
