@@ -9,7 +9,7 @@ profile:
   image: IMG_4353.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
-    <p>Busan, South Korea</p>
+    <p>Gunsan, South Korea</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
@@ -25,8 +25,8 @@ latest_posts:
   limit: 1 # leave blank to include all the blog posts
 ---
 
-I am a researcher who is interested in Mechanistic Interpretability. I am currently looking for a research supervisor. If you need a research assistant, please [contact me](mailto:eppi001004@gmail.com).
+I am interested in mechanistic interpretability of large language models. I study how internal mechanisms underlying model behaviors can be identified and manipulated, with a particular focus on understanding and controlling these behaviors.
 
 Previously, I completed a research internship at SAILAB @ KAIST AI, mentored by Cheongwoong Kang, a PhD candidate at KAIST. During the internship, I worked on the inconsistency of LLMs by analyzing hidden states using vocabulary projection.
 
-I am excited to study the bottom-up approaches in the field of Mechanistic Interpretability. I am currently curious about the following questions: 1. How can we discriminate causally effective features from irrelevant ones more efficiently? 2. Is there a consistent rule for how features combine during internal computation? I know these questions are not easy to answer, but I am eager to learn and explore!
+I am currently exploring mechanistic interpretability through experiment reproductions and small-scale analyses of transformer models. My work focuses on understanding how internal representations relate to model behaviors and underlying mechanisms.
