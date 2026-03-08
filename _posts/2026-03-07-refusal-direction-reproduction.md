@@ -16,6 +16,8 @@ The paper proposes that refusal behavior corresponds to a single direction in th
 
 Using **Gemma 2B**, I reproduced the main experiment and observed similar trends: injecting the refusal direction increases refusal on harmless prompts, while ablating it reduces refusal on harmful prompts.
 
+Implemented repository is available **[here](https://github.com/JakeFRCSE/refusal-direction-reproduction)**.
+
 ## Motivation
 
 Large language models are trained to refuse harmful requests through post-training techniques such as safety fine-tuning. However, these safeguards are not always reliable, and models may still produce harmful responses in certain situations.
@@ -57,7 +59,7 @@ Therefore, the proxy metric proposed in the paper is used to reduce the cost (Ap
 
 ## Implementation
 
-The implementation is available [here](https://github.com/JakeFRCSE/refusal-direction-reproduction).
+The implementation is available **[here](https://github.com/JakeFRCSE/refusal-direction-reproduction)**.
 The implementation relies on the `TransformerLense` library for convenient activation caching and interventions.
 Due to limited computational resources, the experiments are conducted only on google/gemma-2b-it.
 
