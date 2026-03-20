@@ -67,7 +67,12 @@ ninja.data = [{
             },},{id: "news-setting-up-my-personal-website",
           title: 'Setting up my personal website!',
           description: "",
-          section: "News",},{id: "projects-refusal-direction-in-llms",
+          section: "News",},{id: "projects-geometry-of-truth-in-llms",
+          title: 'Geometry of Truth in LLMs',
+          description: "Notes on reproducing “Geometry of Truth” with causal intervention and visualization.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/geometry-of-truth-reproduction/";
+            },},{id: "projects-refusal-direction-in-llms",
           title: 'Refusal Direction in LLMs',
           description: "Reproduction of “Refusal in Language Models Is Mediated by a Single Direction” with causal interventions on the residual stream.",
           section: "Projects",handler: () => {
