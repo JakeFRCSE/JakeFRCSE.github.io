@@ -22,7 +22,7 @@ announcements:
 latest_posts:
   enabled: true
   scrollable: true # adds a vertical scroll bar if there are more than 3 new posts items
-  limit: 1 # leave blank to include all the blog posts
+  limit: 2 # leave blank to include all the blog posts
 ---
 
 I am interested in mechanistic interpretability of large language models. I study how internal mechanisms underlying model behaviors can be identified and manipulated, with a particular focus on understanding and controlling these behaviors.
