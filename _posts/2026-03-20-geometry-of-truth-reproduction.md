@@ -48,39 +48,58 @@ On curated true/false datasets with little variation in non-truth factors, the t
 ## Implementation
 
 The implementation is available **[here](https://github.com/JakeFRCSE/geometry-of-truth-reproduction)**.
+
 This implementation relies on the `TransformerLens` and `nnsight` libraries for convenient activation caching and interventions.
 
 ## Result
 
 ### Paper Results
 
-**Localization of truth feature (Figure 1 in the paper)**
-
-<img src="/assets/img/geometry-of-truth/Patching_paper.png" alt="Result: localization of truth feature (Llama-2-13b)" style="max-width: 100%; width: 560px;">
-
-The paper's result for Llama-2-13b.
-
-**PCA of truth feature (Figure 2 in the paper)**
-
-<img src="/assets/img/geometry-of-truth/PCA_paper.png" alt="Result: PCA of truth feature (Llama-2-70b)" style="max-width: 100%; width: 560px;">
-
-The paper's result for Llama-2-70b.
+<div style="display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap;">
+  <div style="flex: 1 1 320px; min-width: 280px;">
+    <strong>Localization of truth feature (Figure 1 in the paper)</strong>
+    <img
+      src="/assets/img/geometry-of-truth/Patching_paper.png"
+      alt="Result: localization of truth feature (Llama-2-13b)"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+    <p style="margin-top: 0.5rem;">The paper's result for Llama-2-13b.</p>
+  </div>
+  <div style="flex: 1 1 320px; min-width: 280px;">
+    <strong>PCA of truth feature (Figure 2 in the paper)</strong>
+    <img
+      src="/assets/img/geometry-of-truth/PCA_paper.png"
+      alt="Result: PCA of truth feature (Llama-2-70b)"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+    <p style="margin-top: 0.5rem;">The paper's result for Llama-2-70b.</p>
+  </div>
+</div>
 
 ### Reproduced Result
 
 The reproduced results are shown below:
 
-**Localization of truth feature (Llama-2-13b)**
-
-<img src="/assets/img/geometry-of-truth/cities_intervention_heatmap_Llama-2-13b-hf.png" alt="Result: localization of truth feature" style="max-width: 100%; width: 560px;">
-
-The truth feature is localized at layer 12 of Llama-2-13b, as in the paper.
-
-**PCA of truth feature (Llama-2-13b)**
-
-<img src="/assets/img/geometry-of-truth/layer_12_Llama-2-13b-hf.png" alt="Result: PCA of truth feature" style="max-width: 100%; width: 560px;">
-
-The PCA of the truth feature shows a consistent linear structure, as in the paper.
+<div style="display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap;">
+  <div style="flex: 1 1 320px; min-width: 280px;">
+    <strong>Localization of truth feature (Llama-2-13b)</strong>
+    <img
+      src="/assets/img/geometry-of-truth/cities_intervention_heatmap_Llama-2-13b-hf.png"
+      alt="Result: localization of truth feature"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+    <p style="margin-top: 0.5rem;">The truth feature is localized at layer 12 of Llama-2-13b, as in the paper.</p>
+  </div>
+  <div style="flex: 1 1 320px; min-width: 280px;">
+    <strong>PCA of truth feature (Llama-2-13b)</strong>
+    <img
+      src="/assets/img/geometry-of-truth/layer_12_Llama-2-13b-hf.png"
+      alt="Result: PCA of truth feature"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+    <p style="margin-top: 0.5rem;">The PCA of the truth feature shows a consistent linear structure, as in the paper.</p>
+  </div>
+</div>
 
 Results for other models are available **[here](https://drive.google.com/drive/folders/1Azb5cNOOTnu5KtHXSZw9waYHPEoySMOT)**.
 
@@ -88,17 +107,26 @@ Results for other models are available **[here](https://drive.google.com/drive/f
 
 The experiment is extended to the Llama-2-7b model to test whether the linear structure exists in the smaller model.
 
-**PCA of truth feature (Llama-2-7b)**
-
-<img src="/assets/img/geometry-of-truth/layer_12_Llama-2-7b-hf.png" alt="Result: PCA of truth feature" style="max-width: 100%; width: 560px;">
-
-The truth feature is localized at layer 12 of Llama-2-7b, but the linear structure does not form.
-
-Pythia-160m's PCA shows a similar structure to Llama-2-7b.
-
-**PCA of truth feature (Pythia-160m)**
-
-<img src="/assets/img/geometry-of-truth/layer_05_pythia_160m.png" alt="Result: PCA of truth feature" style="max-width: 100%; width: 560px;">
+<div style="display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap;">
+  <div style="flex: 1 1 320px; min-width: 280px;">
+    <strong>PCA of truth feature (Llama-2-7b)</strong>
+    <img
+      src="/assets/img/geometry-of-truth/layer_12_Llama-2-7b-hf.png"
+      alt="Result: PCA of truth feature"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+    <p style="margin-top: 0.5rem;">The truth feature is localized at layer 12 of Llama-2-7b, but the linear structure does not form.</p>
+  </div>
+  <div style="flex: 1 1 320px; min-width: 280px;">
+    <strong>PCA of truth feature (Pythia-160m)</strong>
+    <img
+      src="/assets/img/geometry-of-truth/layer_05_pythia_160m.png"
+      alt="Result: PCA of truth feature"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+    <p style="margin-top: 0.5rem;">Pythia-160m's PCA shows a similar structure to Llama-2-7b.</p>
+  </div>
+</div>
 
 ## Interpretation
 
