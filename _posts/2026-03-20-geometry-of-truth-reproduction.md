@@ -3,7 +3,7 @@ layout: post
 title: Reproduction of Geometry of Truth
 date: 2026-03-20
 description: Notes on reproducing "Geometry of Truth" with causal intervention and visualization.
-tags: mechanistic-interpretability causal-intervention
+tags: mechanistic-interpretability linear-structure
 categories: exploratory
 thumbnail: /assets/img/geometry-of-truth/layer_12_Llama-2-13b-hf.png
 ---
