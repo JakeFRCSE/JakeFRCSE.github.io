@@ -72,13 +72,13 @@ The reproduced results are shown below:
 
 **Localization of truth feature (Llama-2-13b)**
 
-<img src="/assets/img/geometry-of-truth/layer_12_Llama-2-13b-hf.png" alt="Result: localization of truth feature" style="max-width: 100%; width: 560px;">
+<img src="/assets/img/geometry-of-truth/cities_intervention_heatmap_Llama-2-13b-hf.png" alt="Result: localization of truth feature" style="max-width: 100%; width: 560px;">
 
 The truth feature is localized at layer 12 of Llama-2-13b, as in the paper.
 
 **PCA of truth feature (Llama-2-13b)**
 
-<img src="/assets/img/geometry-of-truth/pca_Llama-2-13b-hf.png" alt="Result: PCA of truth feature" style="max-width: 100%; width: 560px;">
+<img src="/assets/img/geometry-of-truth/layer_12_Llama-2-13b-hf.png" alt="Result: PCA of truth feature" style="max-width: 100%; width: 560px;">
 
 The PCA of the truth feature shows a consistent linear structure, as in the paper.
 
