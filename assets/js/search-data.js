@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-reproduction-of-refusal-direction-in-llms",
+        },{id: "post-reproduction-of-geometry-of-truth",
+        
+          title: "Reproduction of Geometry of Truth",
+        
+        description: "Notes on reproducing &quot;Geometry of Truth&quot; with causal intervention and visualization.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/geometry-of-truth-reproduction/";
+          
+        },
+      },{id: "post-reproduction-of-refusal-direction-in-llms",
         
           title: "Reproduction of Refusal Direction in LLMs",
         
