@@ -5,7 +5,7 @@ github_users:
 repo_description_lines_max: 2
 
 github_repos:
-  - JakeFRCSE/refusal-direction-reproduction
   - JakeFRCSE/geometry-of-truth-reproduction
+  - JakeFRCSE/refusal-direction-reproduction
   - JakeFRCSE/KAIRI_2025_Summer
 #  - username/repo-name
