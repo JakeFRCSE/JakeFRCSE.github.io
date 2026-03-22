@@ -6,7 +6,7 @@ subtitle:
 
 profile:
   align: left
-  image: IMG_4353.jpg
+  image: riverdale-park-east.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
     <p>Gunsan, South Korea</p>
@@ -25,8 +25,8 @@ latest_posts:
   limit: 2 # leave blank to include all the blog posts
 ---
 
-I am interested in mechanistic interpretability of large language models. I study how internal mechanisms underlying model behaviors can be identified and manipulated, with a particular focus on understanding and controlling these behaviors.
+I am interested in mechanistic interpretability of large language models. My work focuses on understanding how internal representational structures emerge, and how those structures can be identified and leveraged for AGI safety.
 
-Previously, I completed a research internship at SAILAB @ KAIST AI, mentored by Cheongwoong Kang, a PhD candidate at KAIST. During the internship, I worked on the inconsistency of LLMs by analyzing hidden states using vocabulary projection.
+I am currently exploring these questions through reproduction projects and small-scale experiments on transformer models. Recently, I have been working on projects to understand the discrete clustered structures revealed by PCA.
 
-I am currently exploring mechanistic interpretability through experiment reproductions and small-scale analyses of transformer models. My work focuses on understanding how internal representations relate to model behaviors and underlying mechanisms.
+I am looking for opportunities to work with researchers in mechanistic interpretability and related areas. I am especially interested in questions about feature geometry and its causal manipulation.
