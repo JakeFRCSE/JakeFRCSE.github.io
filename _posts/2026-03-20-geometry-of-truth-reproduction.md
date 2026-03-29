@@ -38,6 +38,20 @@ Guided by the localized "truth" hidden states, the paper visualizes representati
 
 On curated true/false datasets with little variation in non-truth factors, the top principal components reveal clear linear structure: true and false statements separate in the projection.
 
+### 3. Probing and generalization experiments
+
+For the generalization experiments, the paper trains linear probes on one dataset and evaluates them on other datasets with different topics or surface forms. In addition to logistic regression (LR), the paper introduces mass-mean (MM) probing, which uses a difference-in-means direction together with a correction term intended to mitigate interference from features that are not orthogonal to the truth feature.
+
+The main goal is to test whether the learned direction captures a more general notion of truth rather than features tied to one template. The paper also studies whether training on a dataset together with its "opposite" dataset, such as `cities + neg_cities` or `larger_than + smaller_than`, improves transfer to other datasets.
+
+### 4. Measuring NIE for intervention
+
+To test whether the learned probe directions are causally implicated in model outputs, the paper performs intervention experiments on the localized truth-related hidden states. For false-to-true and true-to-false settings, it adds or subtracts the probe direction at the selected token positions and layers, then measures how much the model's output moves toward labeling the statement as TRUE or FALSE.
+
+The paper summarizes this causal effect with the normalized indirect effect (NIE). Intuitively, an NIE near 0 means that the intervention had little effect on the model's prediction, while an NIE near 1 means that the intervention shifted the model's output as strongly as moving from a genuinely false statement to a genuinely true one, or vice versa.
+
+Using this metric, the paper argues that MM identifies directions that are more causally implicated in model outputs than LR, even when its classification accuracy is slightly lower than LR.
+
 ## Implementation
 
 This implementation relies on the `TransformerLens` and `nnsight` libraries for convenient activation caching and interventions. The experiments are conducted on various models. The list of models is shown below:
