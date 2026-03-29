@@ -10,7 +10,7 @@ thumbnail: /assets/img/geometry-of-truth/layer_12_Llama-2-13b-hf.png
 
 ## TL;DR
 
-I reproduced the experiments from the paper **"Geometry of Truth in Language Models"** ([arXiv:2310.06824](https://arxiv.org/pdf/2310.06824)). The paper localizes the activation of the truth feature and visualizes the linear structure of the truth feature. While reproducing the experiments, I observed that the linear structure does not form in the Llama-2-7b model, and the PCA results show a discrete clustered structure. The implemented repository is available **[here](https://github.com/JakeFRCSE/geometry-of-truth-reproduction)**.
+I reproduced the main experiments from **"Geometry of Truth in Language Models"** ([arXiv:2310.06824](https://arxiv.org/pdf/2310.06824)), including localization, PCA visualization, generalization, and NIE-based intervention analysis. In my reproduction, Llama-2-13b shows the same overall pattern as the paper: a clearer linear truth structure in PCA, better cross-dataset generalization when probes are trained on two datasets, and substantially stronger intervention effects. In contrast, Llama-2-7b and smaller models do not show the same clean structure; instead, PCA suggests a more discrete clustered structure, and the weak NIE values suggest that the truth-related representation is not yet causally organized in the same way. The implemented repository is available **[here](https://github.com/JakeFRCSE/geometry-of-truth-reproduction)**.
 
 ## Motivation
 
