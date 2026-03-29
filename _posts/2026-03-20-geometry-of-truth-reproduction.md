@@ -199,16 +199,84 @@ The exact numbers are not perfectly reproduced. However, when the probe is train
 
 NIE was measured on Llama-2-7b by intervening on tokens from layers 5 to 10 and on Llama-2-13b by intervening on tokens from layers 8 to 14. Across both models, MM generally produced stronger intervention results than LR, and the difference is especially clear on Llama-2-13b.
 
-| Train set              | Probe | Llama-2-13b false-to-true | Llama-2-13b true-to-false | Llama-2-7b false-to-true | Llama-2-7b true-to-false |
-| ---------------------- | ----- | ------------------------: | ------------------------: | -----------------------: | -----------------------: |
-| `cities`               | LR    |                     0.138 |                     0.100 |                   -0.064 |                   -0.005 |
-| `cities`               | MM    |                     0.663 |                     0.770 |                    0.014 |                    0.032 |
-| `cities_combined`      | LR    |                     0.205 |                     0.353 |                   -0.014 |                    0.002 |
-| `cities_combined`      | MM    |                     0.697 |                     0.811 |                    0.017 |                   -0.015 |
-| `larger_than`          | LR    |                     0.197 |                     0.169 |                   -0.081 |                   -0.012 |
-| `larger_than`          | MM    |                     0.491 |                     0.600 |                   -0.071 |                    0.003 |
-| `larger_than_combined` | LR    |                     0.070 |                     0.070 |                   -0.007 |                    0.000 |
-| `larger_than_combined` | MM    |                     0.214 |                     0.332 |                   -0.007 |                    0.000 |
+<table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: left;">Train set</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: left;">Probe</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-13b false-to-true</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-13b true-to-false</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-7b false-to-true</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-7b true-to-false</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.138</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.100</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.064</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.005</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.663</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.770</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.014</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.032</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities_combined</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.205</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.353</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.014</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.002</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities_combined</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.697</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.811</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.017</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.015</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.197</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.169</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.081</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.012</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.491</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.600</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.071</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.003</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than_combined</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.070</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.070</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.007</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.000</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than_combined</code></td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.214</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.332</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.007</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.000</td>
+    </tr>
+  </tbody>
+</table>
 
 Note that intervention does not meaningfully work on the 7B model: the NIE values stay close to zero and are much smaller than those of the 13B model. This is consistent with the earlier observation that the linear truth structure does not clearly form in the smaller model.
 
@@ -216,10 +284,13 @@ Note that intervention does not meaningfully work on the 7B model: the NIE value
 
 ### What the result suggests
 
-The reproduced results suggest that the linear structure of the truth feature clearly exists in the larger models; however, it does not form in the smaller models that show a similar structure.
+The reproduced results suggest that the linear structure of the truth feature clearly exists in the larger models; however, it does not form in the smaller models.
+
+The intervention results make this interpretation more concrete. In PCA, Llama-2-13b shows a qualitatively clear separation between true and false statements, while Llama-2-7b and Pythia-160m do not show the same clean linear organization. This qualitative gap is reflected in the causal results: the 13B model shows large NIE values, whereas the 7B model stays near zero across datasets.
+
+The generalization results point in the same direction. Even though the exact numbers are not perfectly reproduced, probes trained on two datasets generalize better than probes trained on a single dataset, which suggests that interference by features that are not orthogonal to the truth feature is mitigated.
 
 ### Follow-up Research Questions
 
-1. How is the "failed" linear structure formed?
+1. How is the discrete clustered linear structure transformed into a continuous linear structure?
 2. How are the linear structure and intervention related?
-3. When does the linear structure form?
