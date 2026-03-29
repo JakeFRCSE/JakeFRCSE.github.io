@@ -135,6 +135,83 @@ The experiment is extended to the Llama-2-7b model to test whether the linear st
 
 The results for other models are available **[here](https://drive.google.com/drive/folders/1Azb5cNOOTnu5KtHXSZw9waYHPEoySMOT)**.
 
+### Generalization
+
+The generalization experiments were evaluated at layer 10 for Llama-2-7b and at layer 15 for Llama-2-13b. The reproduced figures are shown side by side with the corresponding figures from the paper.
+
+**Llama-2-7b**
+
+<div style="display: flex; gap: 1.25rem; align-items: stretch; flex-wrap: wrap;">
+  <div style="flex: 1 1 320px; min-width: 280px; display: grid; grid-template-rows: auto 260px auto;">
+    <strong>Paper</strong>
+    <div style="display: flex; align-items: center; justify-content: center; padding: 0.75rem 0;">
+      <img
+        src="/assets/img/geometry-of-truth/generalization-llama-2-7b.png"
+        alt="Generalization result from the paper for Llama-2-7b"
+        style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
+      >
+    </div>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Generalization result reported in the paper.</p>
+  </div>
+  <div style="flex: 1 1 320px; min-width: 280px; display: grid; grid-template-rows: auto 260px auto;">
+    <strong>Reproduced</strong>
+    <div style="display: flex; align-items: center; justify-content: center; padding: 0.75rem 0;">
+      <img
+        src="/assets/img/geometry-of-truth/generalization-llama-2-7b-layer10.png"
+        alt="Reproduced generalization result for Llama-2-7b at layer 10"
+        style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
+      >
+    </div>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Reproduced result at layer 10.</p>
+  </div>
+</div>
+
+**Llama-2-13b**
+
+<div style="display: flex; gap: 1.25rem; align-items: stretch; flex-wrap: wrap;">
+  <div style="flex: 1 1 320px; min-width: 280px; display: grid; grid-template-rows: auto 260px auto;">
+    <strong>Paper</strong>
+    <div style="display: flex; align-items: center; justify-content: center; padding: 0.75rem 0;">
+      <img
+        src="/assets/img/geometry-of-truth/generalization-llama-2-13b.png"
+        alt="Generalization result from the paper for Llama-2-13b"
+        style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
+      >
+    </div>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Generalization result reported in the paper.</p>
+  </div>
+  <div style="flex: 1 1 320px; min-width: 280px; display: grid; grid-template-rows: auto 260px auto;">
+    <strong>Reproduced</strong>
+    <div style="display: flex; align-items: center; justify-content: center; padding: 0.75rem 0;">
+      <img
+        src="/assets/img/geometry-of-truth/generalization-llama-2-13b-rep-layer15.png"
+        alt="Reproduced generalization result for Llama-2-13b at layer 15"
+        style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
+      >
+    </div>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Reproduced result at layer 15.</p>
+  </div>
+</div>
+
+The exact numbers are not perfectly reproduced. However, when the probe is trained on two datasets, probing performance improves in both models, so I think this still reproduces the paper's main claim about generalization.
+
+### NIE
+
+NIE was measured on Llama-2-7b by intervening on tokens from layers 5 to 10 and on Llama-2-13b by intervening on tokens from layers 8 to 14. Across both models, MM generally produced stronger intervention results than LR, and the difference is especially clear on Llama-2-13b.
+
+| Train set              | Probe | Llama-2-13b false-to-true | Llama-2-13b true-to-false | Llama-2-7b false-to-true | Llama-2-7b true-to-false |
+| ---------------------- | ----- | ------------------------: | ------------------------: | -----------------------: | -----------------------: |
+| `cities`               | LR    |                     0.138 |                     0.100 |                   -0.064 |                   -0.005 |
+| `cities`               | MM    |                     0.663 |                     0.770 |                    0.014 |                    0.032 |
+| `cities_combined`      | LR    |                     0.205 |                     0.353 |                   -0.014 |                    0.002 |
+| `cities_combined`      | MM    |                     0.697 |                     0.811 |                    0.017 |                   -0.015 |
+| `larger_than`          | LR    |                     0.197 |                     0.169 |                   -0.081 |                   -0.012 |
+| `larger_than`          | MM    |                     0.491 |                     0.600 |                   -0.071 |                    0.003 |
+| `larger_than_combined` | LR    |                     0.070 |                     0.070 |                   -0.007 |                    0.000 |
+| `larger_than_combined` | MM    |                     0.214 |                     0.332 |                   -0.007 |                    0.000 |
+
+Note that intervention does not meaningfully work on the 7B model: the NIE values stay close to zero and are much smaller than those of the 13B model. This is consistent with the earlier observation that the linear truth structure does not clearly form in the smaller model.
+
 ## Interpretation
 
 ### What the result suggests
