@@ -88,6 +88,11 @@ ninja.data = [{
           description: "Reproduction of “Refusal in Language Models Is Mediated by a Single Direction” with causal interventions on the residual stream.",
           section: "Projects",handler: () => {
               window.location.href = "/projects/refusal-direction-reproduction/";
+            },},{id: "projects-zero-shot-inference-and-relation-vectors",
+          title: 'Zero-Shot Inference and Relation Vectors',
+          description: "Applying the Function Vectors methodology to zero-shot inference and investigating failure modes of the relation vector.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/zero-shot-inference/";
             },},{id: "teachings-data-science-fundamentals",
           title: 'Data Science Fundamentals',
           description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
