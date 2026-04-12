@@ -109,7 +109,7 @@ Across the three intervention configurations, the normal intervention showed hig
   </div>
 </div>
 
-Consistent with the original paper, the intervention effect peaks around layer $|L|/3$ (approximately layer 9–10 for Llama-3.2-3B with $L = 28$), indicating that the relation signal is most effective when injected in the early-to-middle layers of the model.
+Consistent with the original paper, the intervention effect peaks around layer $$L/3$$ (approximately layer 9–10 for Llama-3.2-3B with $$L = 28$$), indicating that the relation signal is most effective when injected in the early-to-middle layers of the model.
 
 # Implication
 
