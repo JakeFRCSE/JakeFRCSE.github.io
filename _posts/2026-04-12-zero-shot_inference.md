@@ -10,25 +10,23 @@ thumbnail: /assets/img/zero-shot_inference/patching_head_viz.png
 
 # TL;DR
 
-This post applies the methodology of the Function Vectors paper to zero-shot inference. Instead of in-context learning (ICL) prompts, a zero-shot prompt format is used to derive a **relation vector** via activation patching. While the relation vector successfully restores correct answers in the correctly-answered subset (over 80% restoration), it fails to produce a comparable effect on the incorrectly-answered subset (below 40%), suggesting that the failure mode in zero-shot inference involves more than just a weak relation signal.
+This post applies the methodology of the [Function Vectors](https://arxiv.org/pdf/2310.15213) paper to zero-shot inference. Instead of in-context learning (ICL) prompts, a zero-shot prompt format is used to derive a **relation vector** via activation patching. While the relation vector successfully restores correct answers in the correctly-answered subset (over 80% restoration), it fails to produce a comparable effect on the incorrectly-answered subset (below 40%), suggesting that the failure mode in zero-shot inference involves more than just a weak relation signal.
 
 # Motivation
 
-I read the Function Vectors paper, which investigated the function vectors of in-context learning (ICL). The paper showed that specific attention heads carry task-relevant information during ICL, and that a compact vector summarizing these heads' outputs can trigger task execution when injected into the residual stream. This led me to wonder how LLMs solve problems in zero-shot settings, where no in-context examples are provided.
+The [Function Vectors](https://arxiv.org/pdf/2310.15213) paper investigated the function vectors of in-context learning (ICL). The paper showed that specific attention heads carry task-relevant information during ICL, and that a compact vector summarizing these heads' outputs can trigger task execution when injected into the residual stream. However, how LLMs solve problems in zero-shot settings, where no in-context examples are provided, is under-explored.
 
 # Core Idea
 
-This experiment follows the same methodology as the Function Vectors paper but uses a different prompt format. Instead of few-shot ICL prompts, a zero-shot prompt is used:
+This experiment follows the same methodology as the paper but uses a different prompt format. Instead of few-shot ICL prompts, a zero-shot prompt is used:
 
 `Relation: {relation}\nInput: {input_val}\nOutput:`
 
-The goal is to investigate whether a **relation vector** derived from zero-shot prompts works in the same way as the function vectors derived from ICL prompts. Throughout this post, I use the term "relation vector" to distinguish this zero-shot analogue from the original function vector.
+The goal is to investigate whether a **relation vector** derived from zero-shot prompts enforces correct answers in zero-shot inference. Throughout this post, I use the term "relation vector" to distinguish this zero-shot analogue from the original function vector.
 
 # Preliminary Research
 
 As a preliminary experiment, I used the antonym dataset from the Function Vectors codebase to evaluate how well LLMs perform zero-shot inference. The results showed that most of the failed cases were instances of **input repeat**, where the model simply echoed the input word instead of producing its antonym. This suggests that the model's default fallback behavior is to repeat the input.
-
-However, 52% accuracy on the antonym task is not satisfactory, especially considering how low the baseline probability of generating a valid antonym is by chance. This raised the question: why does the model fail on so many examples?
 
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <div style="max-width: 600px; width: 100%; display: flex; flex-direction: column;">
@@ -111,13 +109,24 @@ Across the three intervention configurations, the normal intervention showed hig
   </div>
 </div>
 
+Consistent with the original paper, the intervention effect peaks around layer $|L|/3$ (approximately layer 9–10 for Llama-3.2-3B with $L = 28$), indicating that the relation signal is most effective when injected in the early-to-middle layers of the model.
+
 # Implication
 
-One notable observation is that the relation vector was not effective enough on the incorrectly answered subset to produce an impact comparable to what was observed in the correctly answered subset. Since the relation signal alone is not the key factor behind these failures, the underlying cause is likely a more complex problem. As a next step, I plan to investigate the failure mode further, conjecturing that it may be related to the model's lack of "understanding" of the input word itself.
+One notable observation is that the relation vector was not effective enough on the incorrectly answered subset to produce an impact comparable to what was observed in the correctly answered subset. Since the relation signal alone is not the key factor behind these failures, the underlying cause is likely a more complex problem. A natural next step can be to investigate the failure mode further, conjecturing that it may be related to the model's lack of "understanding" of the input word itself.
+
+# Limitations
+
+This experiment is limited by the following factors:
+
+- Due to limited computational resources, all experiments are conducted on a single task (antonym) and a single model (Llama-3.2-3B). Extending the analysis to other relation types and larger models would strengthen the generality of these findings.
+- Answer prediction is evaluated based on the first token of the answer word, not the entire word.
 
 <div class="appendix-small" markdown="1">
 
 # Appendix
+
+This appendix provides the full mathematical notation for the methods used in this post. Appendix A defines the Causal Indirect Effect (CIE) used to identify causally important attention heads, and Appendix B defines the relation vector constructed from those heads.
 
 ## Appendix A. Causal Indirect Effect (CIE) — Full Notation and Explanation
 
@@ -175,65 +184,63 @@ $$
 
 ---
 
-### A.3. In-Context Learning (ICL) Setup
+### A.3. Zero-Shot Inference Setup
 
-We define a task $t$ with dataset:
-
-$$
-P_t = \{p_i^t\}
-$$
-
-Each prompt is:
+We define a relation $r$ (e.g., "antonym") with dataset:
 
 $$
-p_i^t = [(x_{i1}, y_{i1}), \dots, (x_{iN}, y_{iN}), x_{iq}]
+P_r = \{p_i^r\}
+$$
+
+Each prompt is a zero-shot prompt of the form:
+
+$$
+p_i^r = [\text{Relation: } r, \text{ Input: } x_i, \text{ Output:}]
 $$
 
 where:
 
-- $(x_{ik}, y_{ik})$: demonstration pairs
-- $x_{iq}$: query input
-- $y_{iq}$: correct answer (not shown in the prompt)
+- $r$: relation type (e.g., "antonym")
+- $x_i$: input word
+- $y_i$: correct answer (not shown in the prompt)
 
-We only keep prompts where the model correctly predicts $y_{iq}$.
+We only keep prompts where the model correctly predicts $y_i$.
 
 ---
 
 ### A.4. Corrupted (Uninformative) Prompts
 
-We define a corrupted version:
+We define a corrupted version by replacing the relation with an uninformative one:
 
 $$
-\tilde{p}_i^t = [(x_{i1}, \tilde{y}_{i1}), \dots, (x_{iN}, \tilde{y}_{iN}), x_{iq}]
+\tilde{p}_i^r = [\text{Relation: none}, \text{ Input: } x_i, \text{ Output:}]
 $$
 
-where the labels are shuffled, so there is no true relationship between $x$ and $y$.
-
-This removes the task signal.
+This removes the relation signal while keeping the prompt structure intact, triggering the model's fallback behavior (input repeat).
 
 ---
 
-### A.5. Mean Task-Conditioned Activation
+### A.5. Mean Relation-Conditioned Activation
 
 For each attention head $a_{\ell,j}$, compute:
 
 $$
-\bar{a}_{\ell,j}^t = \frac{1}{|P_t|} \sum_{p_i^t \in P_t} a_{\ell,j}(p_i^t)
+\bar{a}_{\ell,j}^r = \frac{1}{|P_r|} \sum_{p_i^r \in P_r} a_{\ell,j}(p_i^r)
 $$
 
-This is the average activation of head $(\ell,j)$ when solving task $t$.
+This is the average activation of head $(\ell,j)$ over clean prompts for relation $r$.
 
 ---
 
 ### A.6. Intervention (Activation Patching)
 
-We run the model on corrupted prompt $\tilde{p}_i^t$, but replace one head's activation:
+We run the model on corrupted prompt $\tilde{p}_i^r$, but replace one head's activation:
 
 $$
-a_{\ell,j} := \bar{a}_{\ell,j}^t
+a_{\ell,j} := \bar{a}_{\ell,j}^r
 $$
 
-This means that we inject the correct task-specific signal into a corrupted prompt.
+This means that we inject the correct relation-specific signal into a corrupted prompt.
 
 ---
 
@@ -242,11 +249,11 @@ This means that we inject the correct task-specific signal into a corrupted prom
 The CIE is defined as:
 
 $$
-\mathrm{CIE}(a_{\ell,j} \mid \tilde{p}_i^t)
+\mathrm{CIE}(a_{\ell,j} \mid \tilde{p}_i^r)
 =
-f(\tilde{p}_i^t \mid a_{\ell,j} := \bar{a}_{\ell,j}^t)[y_{iq}]
+f(\tilde{p}_i^r \mid a_{\ell,j} := \bar{a}_{\ell,j}^r)[y_i]
 -
-f(\tilde{p}_i^t)[y_{iq}]
+f(\tilde{p}_i^r)[y_i]
 $$
 
 ---
@@ -258,12 +265,12 @@ This measures:
 - the probability of the correct answer after intervention:
 
   $$
-  f(\tilde{p}_i^t \mid a_{\ell,j} := \bar{a}_{\ell,j}^t)[y_{iq}]
+  f(\tilde{p}_i^r \mid a_{\ell,j} := \bar{a}_{\ell,j}^r)[y_i]
   $$
 
 - the probability of the correct answer without intervention:
   $$
-  f(\tilde{p}_i^t)[y_{iq}]
+  f(\tilde{p}_i^r)[y_i]
   $$
 
 So:
@@ -285,76 +292,74 @@ It quantifies how much this attention head causally contributes to producing the
 
 ### A.10. Average Indirect Effect (AIE)
 
-To aggregate over tasks and prompts:
+To aggregate over all corrupted prompts:
 
 $$
 \mathrm{AIE}(a_{\ell,j}) =
-\frac{1}{|T|}
-\sum_{t \in T}
-\frac{1}{|\tilde{P}_t|}
-\sum_{\tilde{p}_i^t \in \tilde{P}_t}
-\mathrm{CIE}(a_{\ell,j} \mid \tilde{p}_i^t)
+\frac{1}{|\tilde{P}_r|}
+\sum_{\tilde{p}_i^r \in \tilde{P}_r}
+\mathrm{CIE}(a_{\ell,j} \mid \tilde{p}_i^r)
 $$
 
-This identifies globally important heads across tasks.
+This identifies globally important heads for the relation.
 
 ---
 
-## Appendix B. Function Vector Formulation
+## Appendix B. Relation Vector Formulation
 
-After computing the average indirect effect (AIE) for every attention head, the paper selects a set of the most causally important heads:
+After computing the average indirect effect (AIE) for every attention head, we select a set of the most causally important heads:
 
 $$
 A = \{\text{top attention heads ranked by AIE}\}
 $$
 
-Here, $A$ is the set of heads that appear to contribute most strongly to task execution across tasks.
+Here, $A$ is the set of heads that appear to contribute most strongly to producing the correct answer for relation $r$.
 
 ---
 
-### B.1. Task-Conditioned Mean Activation of a Head
+### B.1. Relation-Conditioned Mean Activation of a Head
 
-For each selected attention head $a_{\ell,j} \in A$, define its task-conditioned mean activation for task $t$ as:
+For each selected attention head $a_{\ell,j} \in A$, define its relation-conditioned mean activation for relation $r$ as:
 
 $$
-\bar{a}_{\ell,j}^t
+\bar{a}_{\ell,j}^r
 =
-\frac{1}{|P_t|}
-\sum_{p_i^t \in P_t} a_{\ell,j}(p_i^t)
+\frac{1}{|P_r|}
+\sum_{p_i^r \in P_r} a_{\ell,j}(p_i^r)
 $$
 
-This is the average output of head $(\ell,j)$ over clean prompts for task $t$.
+This is the average output of head $(\ell,j)$ over clean prompts for relation $r$.
 
 Interpretation:
 
-- $a_{\ell,j}(p_i^t)$: output of head $(\ell,j)$ on one clean prompt
-- $\bar{a}_{\ell,j}^t$: typical head output when the model is performing task $t$
+- $a_{\ell,j}(p_i^r)$: output of head $(\ell,j)$ on one clean prompt
+- $\bar{a}_{\ell,j}^r$: typical head output when the model is processing relation $r$
 
 ---
 
-### B.2. Function Vector Definition
+### B.2. Relation Vector Definition
 
-The function vector for task $t$ is defined as the sum of these task-conditioned mean head outputs over the selected causal heads:
+The relation vector for relation $r$ is defined as the sum of these relation-conditioned mean head outputs over the selected causal heads:
 
 $$
-v_t
+v_r
 =
-\sum_{a_{\ell,j} \in A} \bar{a}_{\ell,j}^t
+\sum_{a_{\ell,j} \in A} \bar{a}_{\ell,j}^r
 $$
 
-This is Equation (5) in the paper.
+This follows the same construction as Equation (5) in the Function Vectors paper, adapted to the zero-shot setting.
 
 ---
 
-### B.3. Interpretation of the Function Vector
+### B.3. Interpretation of the Relation Vector
 
 The intuition is:
 
-- each important head in $A$ carries part of the task-relevant signal
+- each important head in $A$ carries part of the relation-relevant signal
 - summing their average outputs gives one compact vector
-- this vector is meant to represent the task in the residual stream
+- this vector is meant to represent the relation in the residual stream
 
-So $v_t$ is a compressed representation of the internal signal typically transported when the model performs task $t$.
+So $v_r$ is a compressed representation of the internal signal typically transported when the model processes relation $r$.
 
 ---
 
@@ -362,7 +367,7 @@ So $v_t$ is a compressed representation of the internal signal typically transpo
 
 The formulation relies on the fact that attention head outputs are written in the residual-stream space.
 
-The paper defines the hidden state as:
+The hidden state is defined as:
 
 $$
 h_\ell = h_{\ell-1} + m_\ell + \sum_{j=1}^{J} a_{\ell,j}
@@ -373,19 +378,19 @@ Since each $a_{\ell,j} \in \mathbb{R}^d$ already lives in the same residual-stre
 Therefore:
 
 $$
-v_t \in \mathbb{R}^d
+v_r \in \mathbb{R}^d
 $$
 
 and it can be directly added to hidden states.
 
 ---
 
-### B.5. Function Vector Intervention
+### B.5. Relation Vector Intervention
 
-Once $v_t$ is constructed, the paper tests it by adding it to a hidden state at layer $\ell$:
+Once $v_r$ is constructed, we test it by adding it to a hidden state at layer $\ell$:
 
 $$
-h_\ell' = h_\ell + v_t
+h_\ell' = h_\ell + v_r
 $$
 
 Equivalently, using the expanded residual-stream form:
@@ -393,25 +398,23 @@ Equivalently, using the expanded residual-stream form:
 $$
 h_\ell'
 =
-h_{\ell-1} + m_\ell + \sum_{j=1}^{J} a_{\ell,j} + v_t
+h_{\ell-1} + m_\ell + \sum_{j=1}^{J} a_{\ell,j} + v_r
 $$
-
-This is Equation (14) in Appendix B.
 
 ---
 
-### B.6. Model Output Under FV Intervention
+### B.6. Model Output Under Relation Vector Intervention
 
-If we intervene on prompt $p$ by adding $v_t$ at layer $\ell$, the resulting model behavior can be written as:
+If we intervene on prompt $p$ by adding $v_r$ at layer $\ell$, the resulting model behavior can be written as:
 
 $$
-f(p \mid h_\ell := h_\ell + v_t)
+f(p \mid h_\ell := h_\ell + v_r)
 $$
 
 This means:
 
 - run the model on prompt $p$
-- at layer $\ell$, replace the hidden state with $h_\ell + v_t$
+- at layer $\ell$, replace the hidden state with $h_\ell + v_r$
 - continue the forward pass and observe the new output distribution
 
 ---
@@ -420,45 +423,39 @@ This means:
 
 The full pipeline is:
 
-1. Collect clean ICL prompts for task $t$.
-2. Compute mean activation $\bar{a}_{\ell,j}^t$ for each head.
+1. Collect clean zero-shot prompts for relation $r$.
+2. Compute mean activation $\bar{a}_{\ell,j}^r$ for each head.
 3. Compute AIE for all heads using corrupted prompts.
 4. Select top causal heads $A$.
-5. Sum their task-conditioned mean outputs to form:
+5. Sum their relation-conditioned mean outputs to form:
    $$
-   v_t = \sum_{a_{\ell,j}\in A} \bar{a}_{\ell,j}^t
+   v_r = \sum_{a_{\ell,j}\in A} \bar{a}_{\ell,j}^r
    $$
-6. Add $v_t$ to a hidden state during inference.
-7. Measure whether the model now performs task $t$.
+6. Add $v_r$ to a hidden state during inference.
+7. Measure whether the model now produces the correct answer for relation $r$.
 
 ---
 
 ### B.8. Compact Summary
 
-The function vector is not defined as an arbitrary learned vector.
+The relation vector is not defined as an arbitrary learned vector.
 
 It is constructed from actual model activations:
 
 $$
-v_t
+v_r
 =
 \sum_{a_{\ell,j}\in A}
 \left(
-\frac{1}{|P_t|}
-\sum_{p_i^t\in P_t} a_{\ell,j}(p_i^t)
+\frac{1}{|P_r|}
+\sum_{p_i^r\in P_r} a_{\ell,j}(p_i^r)
 \right)
 $$
 
 So it is:
 
-- task-specific
+- relation-specific
 - activation-derived
 - causally motivated, because the selected heads are chosen by AIE/CIE
-
----
-
-### B.9. One-Sentence Summary
-
-A function vector for task $t$ is the sum of the average outputs of the attention heads that have the highest causal indirect effect for that task family, and it is used by adding it into the residual stream to trigger execution of the task.
 
 </div>
