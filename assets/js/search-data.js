@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-reproduction-of-geometry-of-truth",
+        },{id: "post-zero-shot-inference-and-relation-vectors",
+        
+          title: "Zero-Shot Inference and Relation Vectors",
+        
+        description: "Applying the Function Vectors methodology to zero-shot inference and investigating why the relation vector fails on incorrectly answered examples.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/zero-shot_inference/";
+          
+        },
+      },{id: "post-reproduction-of-geometry-of-truth",
         
           title: "Reproduction of Geometry of Truth",
         
