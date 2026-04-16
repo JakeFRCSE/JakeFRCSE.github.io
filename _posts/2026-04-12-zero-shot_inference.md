@@ -10,7 +10,7 @@ thumbnail: /assets/img/zero-shot_inference/patching_head_viz.png
 
 # TL;DR
 
-This post applies the methodology of the [Function Vectors](https://arxiv.org/pdf/2310.15213) paper to zero-shot inference. Instead of in-context learning (ICL) prompts, a zero-shot prompt format is used to derive a **relation vector** via activation patching. While the relation vector successfully restores correct answers in the correctly-answered subset (over 80% restoration), it fails to produce a comparable effect on the incorrectly-answered subset (below 40%), suggesting that the failure mode in zero-shot inference involves more than just a weak relation signal.
+This post applies the methodology of the [Function Vectors](https://arxiv.org/pdf/2310.15213) paper to zero-shot inference. Instead of in-context learning (ICL) prompts, a zero-shot prompt format is used to derive a **relation vector** via activation patching. While the relation vector successfully restores correct answers in the correctly-answered subset (over 80% restoration) for the Llama-3.2-3B model, it fails to produce a comparable effect on the incorrectly-answered subset (below 40%) and for other models, suggesting that the success of the relation vector is an artifact of the model and the prompt format.
 
 # Motivation
 
@@ -20,7 +20,11 @@ The [Function Vectors](https://arxiv.org/pdf/2310.15213) paper investigated the 
 
 This experiment follows the same methodology as the paper but uses a different prompt format. Instead of few-shot ICL prompts, a zero-shot prompt is used:
 
-`Relation: {relation}\nInput: {input_val}\nOutput:`
+`Relation: {relation}\nInput: {input}\nOutput:`
+
+At the same time, another prompt format is used to validate the relation vector; if the relation vector is general, it should yield comparable results even when it is extracted from the other prompt format. The other prompt format is:
+
+`Q: What is the {relation} of {input}?\nA: {output}`
 
 The goal is to investigate whether a **relation vector** derived from zero-shot prompts enforces correct answers in zero-shot inference. Throughout this post, I use the term "relation vector" to distinguish this zero-shot analogue from the original function vector.
 
@@ -31,7 +35,7 @@ As a preliminary experiment, I used the antonym dataset from the Function Vector
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <div style="max-width: 600px; width: 100%; display: flex; flex-direction: column;">
     <img
-      src="/assets/img/zero-shot_inference/accuracy_plot.png"
+      src="/assets/img/zero-shot_inference/accuracy_plot_1e1ef3fe.png"
       alt="Prediction accuracy by relation condition"
       style="max-width: 100%; width: 100%; height: auto;"
     >
@@ -43,13 +47,13 @@ As a preliminary experiment, I used the antonym dataset from the Function Vector
 
 ## 1. Dataset Split
 
-Following the original paper, the dataset is split into two subsets: one consisting of examples the model answers correctly (used to derive the relation vector) and another consisting of incorrectly answered examples. Also following the paper, the number of prompts used for the clean run and the corrupted run are 100 and 25, respectively.
+Following the original paper, the dataset is split into two subsets: one consisting of examples the model answers correctly (used to derive the relation vector) and another consisting of incorrectly answered examples (used to validate generalizability of the relation vector). Also following the paper, the number of prompts used for the clean run and the corrupted run are 100 and 25, respectively.
 
 ## 2. Patching
 
-To derive the relation vector, I employed the activation patching method. The **clean run** uses the zero-shot prompt as specified above. The **corrupt run** replaces the relation word "antonym" with "none." In the preliminary experiment, the "none" relation triggered the fallback mode (input repeat), so replacing "antonym" with "none" effectively removes the relation signal while preserving the rest of the prompt structure.
+To derive the relation vector, the activation patching method is employed. The **clean run** uses the zero-shot prompts as specified above. The **corrupt run** replaces the relation word "antonym" with "none," which removes the relation signal while preserving the rest of the prompt structure.
 
-After patching, the Causal Indirect Effect (CIE) is calculated for each attention head. This result is consistent with the original paper: attention heads with strong CIE appear in the middle layers of the model. The relation vector is then constructed by summing the mean output vectors of the top-10 heads (marked with red borders below), projected into the hidden state space through their corresponding attention head output matrices.
+After patching, the Causal Indirect Effect (CIE) is calculated for each attention head. This result is consistent with the original paper: attention heads with strong CIE appear in the middle layers of the model. The relation vector is then constructed by summing the mean output vectors of the top-10 heads (marked with red borders below), after being projected into the hidden state space through their corresponding attention head output matrices.
 
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <div style="max-width: 600px; width: 100%; display: flex; flex-direction: column;">
@@ -72,7 +76,7 @@ Intervention experiments were conducted layer-wise in three settings:
 
 3. **Restore intervention** (`intervention_restore_fig`): For the incorrectly answered subset, the relation is corrupted and the relation vector is added. This setting tests whether the failure can be corrected when the original relation signal is removed and replaced with the relation vector.
 
-# Results
+### Results of Intervention Experiments
 
 Across the three intervention configurations, the normal intervention showed high restoration of correct answers (over 80%). However, neither the restore setting nor the enforce setting reached above 40% correction on the incorrectly answered subset.
 
@@ -111,16 +115,75 @@ Across the three intervention configurations, the normal intervention showed hig
 
 Consistent with the original paper, the intervention effect peaks around layer $$L/3$$ (approximately layer 9–10 for Llama-3.2-3B with $$L = 28$$), indicating that the relation signal is most effective when injected in the early-to-middle layers of the model.
 
+## 4. Validation / Generalization
+
+To validate the generalizability of the relation vector, the same intervention experiments at $\frac{L}{3}$ layers, [as the paper](https://arxiv.org/pdf/2310.15213), are conducted on the prompt formats and different sizes/families of models. The results are shown below:
+
+**Prompt formats.** *Format 1* is `Relation: {relation}\nInput: {input}\nOutput:` (hash `prompt_1e1ef3fe`). *Format 2* is `Q: What is the {relation} of {input}?\nA: {output}` (hash `prompt_f4027ccf`). Entries are percentages for **normal intervention** (correctly answered subset, relation corrupted, relation vector added at the listed target layer). 
+
+<table>
+  <thead>
+    <tr>
+      <th rowspan="3">Model</th>
+      <th rowspan="3">Task</th>
+      <th colspan="4">Format 1 (`prompt_1e1ef3fe`)</th>
+      <th colspan="4">Format 2 (`prompt_f4027ccf`)</th>
+    </tr>
+    <tr>
+      <th colspan="2">Input prediction</th>
+      <th colspan="2">Output prediction</th>
+      <th colspan="2">Input prediction</th>
+      <th colspan="2">Output prediction</th>
+    </tr>
+    <tr>
+      <th>Before</th>
+      <th>After</th>
+      <th>Before</th>
+      <th>After</th>
+      <th>Before</th>
+      <th>After</th>
+      <th>Before</th>
+      <th>After</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Pythia 2.8B</td><td>antonym</td><td><strong>76</strong></td><td><strong>48</strong></td><td><strong>20</strong></td><td><strong>48</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><td>Pythia 6.9B</td><td>antonym</td><td><strong>60</strong></td><td><strong>40</strong></td><td><strong>8</strong></td><td><strong>36</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><td>Llama 3.1 8B</td><td>antonym</td><td><strong>84</strong></td><td><strong>0</strong></td><td>12</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><td>Llama 3.2 3B</td><td>antonym</td><td><strong>76</strong></td><td><strong>4</strong></td><td><strong>16</strong></td><td><strong>72</strong></td><td>0</td><td>4</td><td>0</td><td>0</td></tr>
+  </tbody>
+</table>
+
+As seen above, the relation vector is effective in the format 1 for pythia 2.8B, 6.9B and llama 3.2 3B models, but not in the rest of settings. This suggests that the relation vector can be an artifact of the prompt format and the models.
+
+**Fallback behavior.** The fallback behavior is found during the preliminary experiment. In the prompt format 1, the model highly repeats the input word when the relation is replaced with "none." But in the prompt format 2, the model does not exhibit this behavior. This suggests that the fallback behavior is not a general property of the model, but rather an artifact of the prompt format.
+
+<div style="display: flex; gap: 1.25rem; align-items: stretch; flex-wrap: wrap; margin: 1rem 0 1.5rem 0;">
+  <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column;">
+    <strong>Prompt format 1</strong>
+    <img
+      src="/assets/img/zero-shot_inference/accuracy_plot_1e1ef3fe.png"
+      alt="Prediction accuracy by relation condition for prompt format 1"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+  </div>
+  <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column;">
+    <strong>Prompt format 2</strong>
+    <img
+      src="/assets/img/zero-shot_inference/accuracy_plot_f4027ccf.png"
+      alt="Prediction accuracy by relation condition for prompt format 2"
+      style="max-width: 100%; width: 100%; height: auto;"
+    >
+  </div>
+</div>
+
+As seen above, the input repetition and output repetition drastically decreased by changing the prompt format.
+
 # Implication
 
-One notable observation is that the relation vector was not effective enough on the incorrectly answered subset to produce an impact comparable to what was observed in the correctly answered subset. Since the relation signal alone is not the key factor behind these failures, the underlying cause is likely a more complex problem. A natural next step can be to investigate the failure mode further, conjecturing that it may be related to the model's lack of "understanding" of the input word itself.
+Zero-shot inference is a challenging task because it requires the model to understand the relation and the input word in a single pass. The intervention performance varied by prompt format and model size/family, suggesting that a single pass is not enough for the model to understand the relation and the input word.
 
-# Limitations
-
-This experiment is limited by the following factors:
-
-- Due to limited computational resources, all experiments are conducted on a single task (antonym) and a single model (Llama-3.2-3B). Extending the analysis to other relation types and larger models would strengthen the generality of these findings.
-- Answer prediction is evaluated based on the first token of the answer word, not the entire word.
+Given few-shot examplars serve as a guide for the model to understand a task, investigating how the model utilizes the examplars is an intersting next step.
 
 <div class="appendix-small" markdown="1">
 
