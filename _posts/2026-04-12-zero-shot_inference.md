@@ -119,7 +119,7 @@ Consistent with the original paper, the intervention effect peaks around layer $
 
 To validate the generalizability of the relation vector, the same intervention experiments at $\frac{L}{3}$ layers, [as the paper](https://arxiv.org/pdf/2310.15213), are conducted on the prompt formats and different sizes/families of models. The results are shown below:
 
-**Prompt formats.** *Format 1* is `Relation: {relation}\nInput: {input}\nOutput:` (hash `prompt_1e1ef3fe`). *Format 2* is `Q: What is the {relation} of {input}?\nA: {output}` (hash `prompt_f4027ccf`). Entries are percentages for **normal intervention** (correctly answered subset, relation corrupted, relation vector added at the listed target layer). 
+**Prompt formats.** _Format 1_ is `Relation: {relation}\nInput: {input}\nOutput:` (hash `prompt_1e1ef3fe`). _Format 2_ is `Q: What is the {relation} of {input}?\nA: {output}` (hash `prompt_f4027ccf`). Entries are percentages for **normal intervention** (correctly answered subset, relation corrupted, relation vector added at the listed target layer).
 
 <table>
   <thead>
