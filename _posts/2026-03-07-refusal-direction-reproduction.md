@@ -12,13 +12,13 @@ thumbnail: /assets/img/gemma-2b-itrefusal_fig3_reproduce.png
 
 I reproduced the main experiment from the paper **"Refusal in Language Models Is Mediated by a Single Direction"** ([arXiv:2406.11717](https://arxiv.org/pdf/2406.11717)).
 
-The paper proposes that refusal behavior corresponds to a single direction in the residual stream of a transformer model. By adding this direction, the model can be induced to refuse harmless prompts, while removing it suppresses refusal on harmful prompts.
+The paper claims that refusal behavior corresponds to a single direction in the residual stream of a transformer model. By adding this direction, the model can be induced to refuse harmless prompts, while removing it suppresses refusal on harmful prompts.
 
 Using **Gemma 2B**, I reproduced the main experiment and observed similar trends: injecting the refusal direction increases refusal on harmless prompts, while ablating it reduces refusal on harmful prompts.
 
 Implemented repository is available **[here](https://github.com/JakeFRCSE/refusal-direction-reproduction)**.
 
-## Motivation
+## Motivation of the paper
 
 Large language models are trained to refuse harmful requests through post-training techniques such as safety fine-tuning. However, these safeguards are not always reliable, and models may still produce harmful responses in certain situations.
 
@@ -28,34 +28,30 @@ If this is the case, it raises an interesting possibility: rather than relying s
 
 _Refusal in Language Models Is Mediated by a Single Direction_ explores this idea. In this post, I reproduce its experiment to see how the method works in practice.
 
-## Core Idea
-
-The paper hypothesizes that refusal behavior is represented by a single direction in the residual stream. Adding this direction induces refusal on harmless prompts, while removing it suppresses refusal on harmful prompts.
-
 ## Experimental Setup
 
 The experiment is conducted on the **Gemma 2B** model.
 The dataset is directly imported from the [codebase](https://github.com/andyrdt/refusal_direction/tree/main/dataset/splits) of the paper.
 
-### 1. Extract residual stream representations from harmful and harmless prompts
+### 1. Extracting the residual stream representations from harmful and harmless prompts
 
 Residual stream representations are extracted from harmful and harmless prompts.
-The prompts are constructed by inserting harmful or harmless instructions into the chosen model's instruction format.
+The prompts are constructed by inserting harmful or harmless instructions into the chosen model's instruction prompt format.
 After tokenization, the prompts are passed to the model to obtain the residual stream activations.
 These representations are collected from all layers of the model at post-instruction token positions (Appendix C.3).
 
-### 2. Compute candidate refusal directions from the difference between mean representations
+### 2. Computing candidate refusal directions from the difference between mean representations
 
-Candidate refusal directions are computed from the difference between mean representations.
+Candidate refusal directions are computed from the difference between the mean representations.
 The representations at the same layer and position index are averaged over the batch dimension.
 The difference between the averaged representations is taken to compute the candidate refusal directions.
 Thus, the final candidate refusal directions have shape (num_layers, num_post_instruction_tokens, hidden_size).
 
-### 3. Select the optimal direction using bypass/induce scores
+### 3. Selecting the optimal direction using bypass/induce scores
 
 The optimal direction is selected following the selection algorithm described in the paper (Appendix C).
 However, evaluating the scores via generation is computationally expensive.
-Therefore, the proxy metric proposed in the paper is used to reduce the cost (Appendix B).
+Therefore, the proxy metric proposed in the paper is instead used to reduce the cost (Appendix B).
 
 ## Implementation
 
@@ -63,7 +59,7 @@ The implementation is available **[here](https://github.com/JakeFRCSE/refusal-di
 The implementation relies on the `TransformerLense` library for convenient activation caching and interventions.
 Due to limited computational resources, the experiments are conducted only on google/gemma-2b-it.
 
-## Result
+## Results
 
 ### Paper Results
 
@@ -79,7 +75,7 @@ As shown in the paper, ablating the refusal direction reduces refusal behavior o
 
 Adding the refusal direction induces refusal behavior even for harmless prompts.
 
-### Reproduced Result
+### Reproduced Results
 
 Our reproduction produces the following result:
 
@@ -91,18 +87,8 @@ The reproduced results show similar trends: adding the refusal direction increas
 
 ### What the result suggests
 
-The reproduced results show that manipulating a single direction in the residual stream systematically changes the model’s refusal behavior.
-Adding the direction increases refusal even on harmless prompts, while removing the direction reduces refusal on harmful prompts.
-
-This suggests that the model’s refusal behavior is strongly associated with a specific representation in the residual stream.
-Intervening on this representation directly alters the model’s decision to refuse or comply with a prompt.
-
-### Connection to the paper's hypothesis
-
-These findings are consistent with the paper’s hypothesis that refusal behavior is mediated by a single direction in the residual stream.
-
-If refusal were distributed across many unrelated representations, manipulating a single direction would not produce such consistent changes in behavior.
-However, the experimental results show that adding or removing this direction reliably induces or suppresses refusal behavior.
+The reproduced results show that manipulating a single direction in the residual stream changes the model’s refusal behavior.
+This suggests that the model’s refusal behavior is strongly associated with a specific representation in the residual stream and intervening on this representation can alter the model’s decision to refuse or comply with a prompt.
 
 ## Reflection
 
