@@ -28,21 +28,21 @@ The dataset is imported directly from the **[codebase](https://github.com/saprma
 
 ### 1. Localizing the activation of truth feature
 
-To localize causally implicated hidden states, the paper runs patching experiments on cached residual stream activations. Starting from a prompt `pF` whose final statement is false, it constructs a corresponding prompt `pT` by making the same statement true and caches residual stream activations at every token position `i` and layer `l` for `pT`.
+To localize causally implicated hidden states, the paper runs patching experiments on cached residual stream activations. Starting from a prompt `p_F` whose final statement is false, it constructs a corresponding prompt `p_T` by making the same statement true. Residual stream activations are cached at every token position `i` and layer `l` for `p_T`.
 
-Then, for each `(i, l)`, it reruns the model on `pF` while swapping in the cached residual stream activation from `pT` (and letting this affect downstream computation). For each intervention, it measures causal influence by the difference in log probability between the tokens "TRUE" and "FALSE," and collects the most causally influential activations into groups.
+Then, for each `(i, l)`, the model is run on `p_F` while swapping in the cached residual stream activation from `p_T` (and letting this affect downstream computation). For each intervention, it measures causal influence by the difference in log probability between the tokens "TRUE" and "FALSE," and collects the most causally influential activation spots into groups.
 
 ### 2. Computing PCA of truth feature
 
-Guided by the localized "truth" hidden states, the paper visualizes representation geometry with PCA. For each dataset, it takes the most downstream residual stream activation from the truth group (for example, LLaMA-2-13B uses the layer-15 residual stream over the end-of-sentence punctuation token). It also centers activations by subtracting the mean, and then applies PCA to obtain the leading principal components.
+Guided by the localized "truth" hidden states, the paper visualizes representation geometry with PCA. For each dataset, it takes the most downstream residual stream activation from the truth group (for example, LLaMA-2-13B uses the layer-15 residual stream over the end-of-sentence punctuation token, see the figure 1 in the paper).
 
-On curated true/false datasets with little variation in non-truth factors, the top principal components reveal clear linear structure: true and false statements separate in the projection.
+On curated true/false datasets which have little variation in non-truth factors, the top principal components reveal clear linear structure: true and false statements separate in the projection.
 
 ### 3. Probing and generalization experiments
 
-For the generalization experiments, the paper trains linear probes on one dataset and evaluates them on other datasets with different topics or surface forms. In addition to logistic regression (LR), the paper introduces mass-mean (MM) probing, which uses a difference-in-means direction together with a correction term intended to mitigate interference from features that are not orthogonal to the truth feature.
+For the generalization experiments, the paper finds truth directions and evaluates them on other datasets with different topics or surface forms. To find the directions, in addition to logistic regression (LR), the paper introduces mass-mean (MM) probing, which uses a difference-in-means direction together with a correction term intended to mitigate interference from features that are not orthogonal to the truth feature. See the section 5.1 in the paper for more details.
 
-The main goal is to test whether the learned direction captures a more general notion of truth rather than features tied to one template. The paper also studies whether training on a dataset together with its "opposite" dataset, such as `cities + neg_cities` or `larger_than + smaller_than`, improves transfer to other datasets.
+The main goal is to test whether the direction captures a more general notion of truth rather than features tied to one template. The paper also studies whether training on a dataset together with its "opposite" dataset, such as `cities + neg_cities` or `larger_than + smaller_than`, improves transfer to other datasets.
 
 ### 4. Measuring NIE for intervention
 
@@ -72,7 +72,7 @@ This implementation relies on the `TransformerLens` and `nnsight` libraries for 
 | Qwen       | `Qwen/Qwen1.5-1.8B`         |
 | Gemma      | `google/gemma-2b-it`        |
 
-## Result
+## Results
 
 ### Paper Results
 
@@ -97,7 +97,7 @@ This implementation relies on the `TransformerLens` and `nnsight` libraries for 
   </div>
 </div>
 
-### Reproduced Result
+### Reproduced Results
 
 The reproduced results are shown below:
 
@@ -147,7 +147,7 @@ The experiment is extended to the Llama-2-7b model to test whether the linear st
   </div>
 </div>
 
-The results for other models are available **[here](https://drive.google.com/drive/folders/1Azb5cNOOTnu5KtHXSZw9waYHPEoySMOT)**.
+The results for other models, more layers are available **[here](https://drive.google.com/drive/folders/1Azb5cNOOTnu5KtHXSZw9waYHPEoySMOT)**.
 
 ### Generalization
 
@@ -165,7 +165,7 @@ The generalization experiments were evaluated at layer 10 for Llama-2-7b and at 
         style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
       >
     </div>
-    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Generalization result reported in the paper.</p>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Generalization results reported in the paper.</p>
   </div>
   <div style="flex: 1 1 320px; min-width: 280px; display: grid; grid-template-rows: auto 260px auto;">
     <strong>Reproduced</strong>
@@ -176,7 +176,7 @@ The generalization experiments were evaluated at layer 10 for Llama-2-7b and at 
         style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
       >
     </div>
-    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Reproduced result at layer 10.</p>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Reproduced results at layer 10.</p>
   </div>
 </div>
 
@@ -192,7 +192,7 @@ The generalization experiments were evaluated at layer 10 for Llama-2-7b and at 
         style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
       >
     </div>
-    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Generalization result reported in the paper.</p>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Generalization results reported in the paper.</p>
   </div>
   <div style="flex: 1 1 320px; min-width: 280px; display: grid; grid-template-rows: auto 260px auto;">
     <strong>Reproduced</strong>
@@ -203,11 +203,11 @@ The generalization experiments were evaluated at layer 10 for Llama-2-7b and at 
         style="max-width: 100%; max-height: 100%; width: auto; height: auto;"
       >
     </div>
-    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Reproduced result at layer 15.</p>
+    <p style="margin-top: 0; padding-top: 0.75rem; border-top: 1px solid rgba(0, 0, 0, 0.15);">Reproduced results at layer 15.</p>
   </div>
 </div>
 
-The exact numbers are not perfectly reproduced. However, when the probe is trained on two datasets, probing performance improves in both models, so I think this still reproduces the paper's main claim about generalization.
+The exact numbers are not perfectly reproduced. However, when the probe is trained on two datasets, probing performance improves in both models, so this reproduction supports the paper's main claim about generalization.
 
 ### NIE
 
@@ -218,74 +218,74 @@ NIE was measured on Llama-2-7b by intervening on tokens from layers 5 to 10 and 
     <tr>
       <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: left;">Train set</th>
       <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: left;">Probe</th>
-      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-13b false-to-true</th>
-      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-13b true-to-false</th>
-      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-7b false-to-true</th>
-      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-7b true-to-false</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-13b<br>false-to-true</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-13b<br>true-to-false</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-7b<br>false-to-true</th>
+      <th style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">Llama-2-7b<br>true-to-false</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.138</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.100</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.138</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.100</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.064</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.005</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.663</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.770</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.663</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.770</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.014</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.032</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities_combined</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.205</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.353</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.205</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.353</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.014</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.002</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>cities_combined</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.697</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.811</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.697</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.811</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.017</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.015</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.197</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.169</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.197</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.169</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.081</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.012</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.491</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.600</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.491</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.600</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.071</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.003</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than_combined</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">LR</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.070</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.070</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.070</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.070</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.007</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.000</td>
     </tr>
     <tr>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;"><code>larger_than_combined</code></td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem;">MM</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.214</td>
-      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.332</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.214</td>
+      <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right; font-weight: bold;">0.332</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">-0.007</td>
       <td style="border: 1px solid rgba(0, 0, 0, 0.2); padding: 0.5rem; text-align: right;">0.000</td>
     </tr>
@@ -302,9 +302,4 @@ The reproduced results suggest that the linear structure of the truth feature cl
 
 The intervention results make this interpretation more concrete. In PCA, Llama-2-13b shows a qualitatively clear separation between true and false statements, while Llama-2-7b and Pythia-160m do not show the same clean linear organization. This qualitative gap is reflected in the causal results: the 13B model shows large NIE values, whereas the 7B model stays near zero across datasets.
 
-The generalization results point in the same direction. Even though the exact numbers are not perfectly reproduced, probes trained on two datasets generalize better than probes trained on a single dataset, which suggests that interference by features that are not orthogonal to the truth feature is mitigated.
-
-### Follow-up Research Questions
-
-1. How is the discrete clustered linear structure transformed into a continuous linear structure?
-2. How are the linear structure and intervention related?
+The generalization results point in the same direction. Even though the exact numbers are not perfectly reproduced, probes trained on two datasets generalize better than probes trained on a single dataset, which suggests that when using MM probing, interference by features that are not orthogonal to the truth feature is mitigated.
