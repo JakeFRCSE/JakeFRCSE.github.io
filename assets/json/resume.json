@@ -62,13 +62,13 @@
     {
       "name": "Deep Learning / Interpretability",
       "level": "Advanced",
-      "icon": "fa-solid fa-brain",
+      "icon": "fa-solid fa-hashtag",
       "keywords": ["PyTorch", "TransformerLens", "NNSight"]
     },
     {
       "name": "Data Analysis",
       "level": "Advanced",
-      "icon": "fa-solid fa-chart-line",
+      "icon": "fa-solid fa-hashtag",
       "keywords": ["Pandas", "NumPy", "Matplotlib", "Seaborn"]
     }
   ],
