@@ -18,19 +18,16 @@ The [Function Vectors](https://arxiv.org/pdf/2310.15213) paper investigated the 
 
 # Core Idea
 
-This experiment follows the same methodology as the paper but uses a different prompt format. Instead of few-shot ICL prompts, a zero-shot prompt is used:
+This experiment follows the same methodology as the paper but uses a different prompt format. Instead of few-shot ICL prompts, two zero-shot prompt formats are used to derive the relation vector.
 
-`Relation: {relation}\nInput: {input}\nOutput:`
+Prompt format 1: `Relation: {relation}\nInput: {input}\nOutput:`
+Prompt format 2: `Q: What is the {relation} of {input}?\nA: {output}`
 
-At the same time, another prompt format is used to validate the relation vector; if the relation vector is general, it should yield comparable results even when it is extracted from the other prompt format. The other prompt format is:
+The goal is to investigate whether a **relation vector** derived from zero-shot prompts enforces correct answers in zero-shot inference even when the prompt format is changed. Throughout this post, I use the term "relation vector" to distinguish this zero-shot inference specific vector from the original function vector.
 
-`Q: What is the {relation} of {input}?\nA: {output}`
+# Preliminary Experiment
 
-The goal is to investigate whether a **relation vector** derived from zero-shot prompts enforces correct answers in zero-shot inference. Throughout this post, I use the term "relation vector" to distinguish this zero-shot analogue from the original function vector.
-
-# Preliminary Research
-
-As a preliminary experiment, I used the antonym dataset from the Function Vectors codebase to evaluate how well LLMs perform zero-shot inference. The results showed that most of the failed cases were instances of **input repeat**, where the model simply echoed the input word instead of producing its antonym. This suggests that the model's default fallback behavior is to repeat the input.
+As a preliminary experiment, the antonym dataset from the Function Vectors codebase and prompt format 1 are used to evaluate how well LLMs perform zero-shot inference. The results showed that most of the failed cases were instances of **input repeat**, where the model simply echoed the input word instead of producing its antonym. This suggests that the model's default fallback behavior is to repeat the input under the prompt format 1.
 
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <div style="max-width: 600px; width: 100%; display: flex; flex-direction: column;">
@@ -53,7 +50,7 @@ Following the original paper, the dataset is split into two subsets: one consist
 
 To derive the relation vector, the activation patching method is employed. The **clean run** uses the zero-shot prompts as specified above. The **corrupt run** replaces the relation word "antonym" with "none," which removes the relation signal while preserving the rest of the prompt structure.
 
-After patching, the Causal Indirect Effect (CIE) is calculated for each attention head. This result is consistent with the original paper: attention heads with strong CIE appear in the middle layers of the model. The relation vector is then constructed by summing the mean output vectors of the top-10 heads (marked with red borders below), after being projected into the hidden state space through their corresponding attention head output matrices.
+After patching, the Causal Indirect Effect (CIE) is calculated for each attention head. These results are consistent with the original paper: attention heads with strong CIE appear in the middle layers of the model. The relation vector is then constructed by summing the mean output vectors of the top-10 heads (marked with red borders below), after being projected into the hidden state space through their corresponding attention head output matrices.
 
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <div style="max-width: 600px; width: 100%; display: flex; flex-direction: column;">
@@ -119,9 +116,9 @@ Consistent with the original paper, the intervention effect peaks around layer $
 
 To validate the generalizability of the relation vector, the same intervention experiments at $\frac{L}{3}$ layers, [as the paper](https://arxiv.org/pdf/2310.15213), are conducted on the prompt formats and different sizes/families of models. The results are shown below:
 
-**Prompt formats.** _Format 1_ is `Relation: {relation}\nInput: {input}\nOutput:` (hash `prompt_1e1ef3fe`). _Format 2_ is `Q: What is the {relation} of {input}?\nA: {output}` (hash `prompt_f4027ccf`). Entries are percentages for **normal intervention** (correctly answered subset, relation corrupted, relation vector added at the listed target layer).
-
-<table>
+<div class="table-responsive" style="margin: 1rem 0;">
+<table class="table table-bordered table-sm" style="margin-bottom: 0;">
+  <caption style="caption-side: top; text-align: left; padding-bottom: 0.5rem; font-size: 0.9em; color: var(--global-text-color-light);">Intervention outcomes by condition. All numeric cells are percentages (%).</caption>
   <thead>
     <tr>
       <th rowspan="3">Model</th>
@@ -136,23 +133,25 @@ To validate the generalizability of the relation vector, the same intervention e
       <th colspan="2">Output prediction</th>
     </tr>
     <tr>
-      <th>Before</th>
-      <th>After</th>
-      <th>Before</th>
-      <th>After</th>
-      <th>Before</th>
-      <th>After</th>
-      <th>Before</th>
-      <th>After</th>
+      <th>Before (%)</th>
+      <th>After (%)</th>
+      <th>Before (%)</th>
+      <th>After (%)</th>
+      <th>Before (%)</th>
+      <th>After (%)</th>
+      <th>Before (%)</th>
+      <th>After (%)</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td>Pythia 2.8B</td><td>antonym</td><td><strong>76</strong></td><td><strong>48</strong></td><td><strong>20</strong></td><td><strong>48</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-    <tr><td>Pythia 6.9B</td><td>antonym</td><td><strong>60</strong></td><td><strong>40</strong></td><td><strong>8</strong></td><td><strong>36</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-    <tr><td>Llama 3.1 8B</td><td>antonym</td><td><strong>84</strong></td><td><strong>0</strong></td><td>12</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-    <tr><td>Llama 3.2 3B</td><td>antonym</td><td><strong>76</strong></td><td><strong>4</strong></td><td><strong>16</strong></td><td><strong>72</strong></td><td>0</td><td>4</td><td>0</td><td>0</td></tr>
+    <tr><td>Pythia 2.8B</td><td>antonym</td><td><strong>76%</strong></td><td><strong>48%</strong></td><td><strong>20%</strong></td><td><strong>48%</strong></td><td>0%</td><td>0%</td><td>0%</td><td>0%</td></tr>
+    <tr><td>Pythia 6.9B</td><td>antonym</td><td><strong>60%</strong></td><td><strong>40%</strong></td><td><strong>8%</strong></td><td><strong>36%</strong></td><td>0%</td><td>0%</td><td>0%</td><td>0%</td></tr>
+    <tr><td>Llama 3.1 8B</td><td>antonym</td><td><strong>84%</strong></td><td><strong>0%</strong></td><td>12%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td><td>0%</td></tr>
+    <tr><td>Llama 3.2 3B</td><td>antonym</td><td><strong>76%</strong></td><td><strong>4%</strong></td><td><strong>16%</strong></td><td><strong>72%</strong></td><td>0%</td><td>4%</td><td>0%</td><td>0%</td></tr>
   </tbody>
 </table>
+</div>
+
 
 As seen above, the relation vector is effective in the format 1 for pythia 2.8B, 6.9B and llama 3.2 3B models, but not in the rest of settings. This suggests that the relation vector can be an artifact of the prompt format and the models.
 
