@@ -152,7 +152,6 @@ To validate the generalizability of the relation vector, the same intervention e
 </table>
 </div>
 
-
 As seen above, the relation vector is effective in the format 1 for pythia 2.8B, 6.9B and llama 3.2 3B models, but not in the rest of settings. This suggests that the relation vector can be an artifact of the prompt format and the models.
 
 **Fallback behavior.** The fallback behavior is found during the preliminary experiment. In the prompt format 1, the model highly repeats the input word when the relation is replaced with "none." But in the prompt format 2, the model does not exhibit this behavior. This suggests that the fallback behavior is not a general property of the model, but rather an artifact of the prompt format.
