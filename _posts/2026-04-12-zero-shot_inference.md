@@ -10,7 +10,8 @@ thumbnail: /assets/img/zero-shot_inference/patching_head_viz.png
 
 # TL;DR
 
-This post applies the methodology of the [Function Vectors](https://arxiv.org/pdf/2310.15213) paper to zero-shot inference. Instead of in-context learning (ICL) prompts, a zero-shot prompt format is used to derive a **relation vector** via activation patching. While the relation vector successfully restores correct answers in the correctly-answered subset (over 80% restoration) for the Llama-3.2-3B model, it fails to produce a comparable effect on the incorrectly-answered subset (below 40%) and for other models, suggesting that the success of the relation vector is an artifact of the model and the prompt format.
+This post tests whether the methodology of [Function Vectors](https://arxiv.org/pdf/2310.15213) can be transferred from in-context learning (ICL) to zero-shot inference. Using a zero-shot prompt, I derive a **relation vector** through activation patching and ask whether it causally restores the target relation. Although the vector restores correct answers in the correctly-answered subset of Llama-3.2-3B (over 80%), the effect does not generalize to the incorrectly-answered subset (below 40%), to other models, or to another prompt format. These results weaken the initial interpretation that the relation vector captures a robust task mechanism, and instead suggest that the observed success is entangled with model and prompt-specific artifacts.
+
 
 # Motivation
 
