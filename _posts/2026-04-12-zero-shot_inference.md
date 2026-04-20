@@ -274,10 +274,10 @@ We only keep prompts where the model correctly predicts $y_i$.
 We define a corrupted version by replacing the relation with an uninformative one:
 
 $$
-\tilde{p}_i^r = [\text{Relation: none}, \text{ Input: } x_i, \text{ Output:}]
+\tilde{p}_i^r = [\text{Relation: "none"}, \text{ Input: } x_i, \text{ Output:}]
 $$
 
-This removes the relation signal while keeping the prompt structure intact, triggering the model's fallback behavior (input repeat).
+This removes the relation signal while keeping the prompt structure intact.
 
 ---
 
@@ -344,14 +344,7 @@ It quantifies how much this attention head causally contributes to producing the
 
 ---
 
-### A.9. Intuition
-
-- If CIE is large, this head carries task-relevant information.
-- If CIE is near zero, this head does not contribute substantially to the task.
-
----
-
-### A.10. Average Indirect Effect (AIE)
+### A.9. Average Indirect Effect (AIE)
 
 To aggregate over all corrupted prompts:
 
@@ -412,19 +405,7 @@ This follows the same construction as Equation (5) in the Function Vectors paper
 
 ---
 
-### B.3. Interpretation of the Relation Vector
-
-The intuition is:
-
-- each important head in $A$ carries part of the relation-relevant signal
-- summing their average outputs gives one compact vector
-- this vector is meant to represent the relation in the residual stream
-
-So $v_r$ is a compressed representation of the internal signal typically transported when the model processes relation $r$.
-
----
-
-### B.4. Why This Sum Makes Sense
+### B.3. Why This Sum Makes Sense
 
 The formulation relies on the fact that attention head outputs are written in the residual-stream space.
 
@@ -446,7 +427,7 @@ and it can be directly added to hidden states.
 
 ---
 
-### B.5. Relation Vector Intervention
+### B.4. Relation Vector Intervention
 
 Once $v_r$ is constructed, we test it by adding it to a hidden state at layer $\ell$:
 
@@ -464,7 +445,7 @@ $$
 
 ---
 
-### B.6. Model Output Under Relation Vector Intervention
+### B.5. Model Output Under Relation Vector Intervention
 
 If we intervene on prompt $p$ by adding $v_r$ at layer $\ell$, the resulting model behavior can be written as:
 
@@ -477,46 +458,5 @@ This means:
 - run the model on prompt $p$
 - at layer $\ell$, replace the hidden state with $h_\ell + v_r$
 - continue the forward pass and observe the new output distribution
-
----
-
-### B.7. Practical Meaning
-
-The full pipeline is:
-
-1. Collect clean zero-shot prompts for relation $r$.
-2. Compute mean activation $\bar{a}_{\ell,j}^r$ for each head.
-3. Compute AIE for all heads using corrupted prompts.
-4. Select top causal heads $A$.
-5. Sum their relation-conditioned mean outputs to form:
-   $$
-   v_r = \sum_{a_{\ell,j}\in A} \bar{a}_{\ell,j}^r
-   $$
-6. Add $v_r$ to a hidden state during inference.
-7. Measure whether the model now produces the correct answer for relation $r$.
-
----
-
-### B.8. Compact Summary
-
-The relation vector is not defined as an arbitrary learned vector.
-
-It is constructed from actual model activations:
-
-$$
-v_r
-=
-\sum_{a_{\ell,j}\in A}
-\left(
-\frac{1}{|P_r|}
-\sum_{p_i^r\in P_r} a_{\ell,j}(p_i^r)
-\right)
-$$
-
-So it is:
-
-- relation-specific
-- activation-derived
-- causally motivated, because the selected heads are chosen by AIE/CIE
 
 </div>
