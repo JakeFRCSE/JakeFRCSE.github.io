@@ -12,7 +12,6 @@ thumbnail: /assets/img/zero-shot_inference/patching_head_viz.png
 
 This post tests whether the methodology of [Function Vectors](https://arxiv.org/pdf/2310.15213) can be transferred from in-context learning (ICL) to zero-shot inference. Using a zero-shot prompt, I derive a **relation vector** through activation patching and ask whether it causally restores the target relation. Although the vector restores correct answers in the correctly-answered subset of Llama-3.2-3B (over 80%), the effect does not generalize to the incorrectly-answered subset (below 40%), to other models, or to another prompt format. These results weaken the initial interpretation that the relation vector captures a robust task mechanism, and instead suggest that the observed success is entangled with model and prompt-specific artifacts.
 
-
 # Motivation
 
 The [Function Vectors](https://arxiv.org/pdf/2310.15213) paper investigated the function vectors of in-context learning (ICL). The paper showed that specific attention heads carry task-relevant information during ICL, and that a compact vector summarizing these heads' outputs can trigger task execution when injected into the residual stream. However, how LLMs solve problems in zero-shot settings, where no in-context examples are provided, is under-explored.
