@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-zero-shot-inference-and-relation-vectors",
+        },{id: "post-emergent-attention-pattern",
+        
+          title: "Emergent Attention Pattern",
+        
+        description: "Research notes on identifying and interpreting emergent attention patterns in transformer language models.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/Emergent-Attention-Pattern/";
+          
+        },
+      },{id: "post-zero-shot-inference-and-relation-vectors",
         
           title: "Zero-Shot Inference and Relation Vectors",
         
