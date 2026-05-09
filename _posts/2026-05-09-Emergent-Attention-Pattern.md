@@ -8,92 +8,101 @@ categories: exploratory
 thumbnail: /assets/img/template_error.png
 ---
 
+Warning: This post is initial upload. Validation experiments are in progress.
+
 ## TL;DR
 
-Activation patching is conducted on Llama-3.2-3B increasing the number of examples from 0 to 1, 3, and 5. A set of heads with high causal logit effect on the output logit difference are identified, some of whom show emergent attention patterns that become distinct as the number of examples increases.
+I study how task-execution behavior emerges in attention heads as the number of in-context examples increases. Using Llama-3.2-3B, I run activation patching on prompts with 0 to 5 examples and measure each component's causal effect on the output logit difference.
+
+The main observation is that several heads with high causal effect also develop clearer attention patterns as more examples are added. This suggests that these heads may contribute not only to storing a task vector, but also to constructing or triggering it from the prompt structure.
 
 ## Motivation
 
-Task Vectors and Function Vectors showed that a task, or a function can be represented as a single vector. However, this representation is not generalizable to other formats of prompts. What information do the vectors contain? How are they constructed? What's going on inside the model when we inject the vectors? In this post, I investigate the attention heads that are responsible for the task execution by adapting the activation patching method to answer these questions.
+Task Vectors and Function Vectors suggest that a task, or function, can be represented by a compact vector inside a language model. However, these vectors often fail to generalize across prompt formats. This raises several questions: what information do these vectors contain, how are they constructed, and what happens inside the model when such vectors are injected?
+
+In this post, I investigate the attention heads involved in task execution. Instead of treating the function vector only as a final activation-space object, I use activation patching to identify the heads and internal components that causally affect the model's output on a simple in-context task.
 
 ## Core Idea
 
-The main idea starts from the idea of the task vectors paper; according to the hypothesis class view, the model first maps the examples $\mathbf{S}$ into a parameter vector $\theta$ and then applies the rule of the vector to the query $x$. The paper investigated the parameter vectors in the activation space, whereas the function vectors paper constructed the parameter vectors from the output of a set of attention heads and suggested that this method is more effective. These approaches are related to the output of component, not to the construction mechanism.
+This project starts from the hypothesis-class view used in the Task Vectors paper. Under this view, the model maps the in-context examples $\mathbf{S}$ into a parameter vector $\theta$, then applies the rule represented by $\theta$ to the query $x$.
 
-If we understand the construction and triggering mechanisms of the function vectors, we would be able to build more refined and robust function vectors, enabling generalized application if the vectors.
+The Task Vectors paper studies this parameter vector in activation space. The Function Vectors paper instead constructs a task vector from the outputs of a small set of attention heads and shows that this construction can be more effective. Both approaches point to an important question: how is the vector constructed before it appears as an activation-space object?
 
-To do this, the main goal of this project is to identify and explore the `execution head`, which formulate the function vectors. In terms of the computation model of attention head, we can expect the query and key to be the query $x$ and the parameter vector $\theta$.
+If we understand the construction and triggering mechanisms of function vectors, we may be able to build more robust vectors that generalize better across prompt formats.
+
+The goal of this project is therefore to identify and analyze possible `execution heads`, namely attention heads that help form or apply the function vector. From the perspective of an attention head, one natural hypothesis is that the query stream represents the test query $x$, while the key/value stream carries information about the inferred task parameter $\theta$.
 
 ## Experimental Setup
 
 ### 1. Model and prompts
 
-- Model: `meta-llama/Llama-3.2-3B`
-- Dataset is synthetized.
-- Prompt format: Following the function vector paper, `Q:\nA:\n\n` format is used.
-- Number of examples: `0 1 3 5`
+- Model: `meta-llama/Llama-3.2-3B`, loaded in bfloat16 dtype to prevent OOM.
+- Prompt format: following the Function Vectors paper, I use the `Q:\nA:\n\n` format.
+- Number of examples: `0`, `1`, `2`, `3`, `4`, and `5`.
+
+To make the n-shot settings comparable, I use the same query examples across different numbers of shots. The in-context examples are also constructed from the same ordered pool, so the 1-shot, 3-shot, and 5-shot prompts can be compared as progressively longer prefixes of the same example sequence.
 
 ### 2. Dataset
 
-Following the IOI circuit paper, the prompt format used in this project is carefully designed. To be more specific, the data to insert into the format is extracted from the model's vocabulary following the conditions listed below, which allow us to facilitate patching experiments and tracking the token positions of our interest.
+Following the IOI circuit paper, I design the dataset so that token positions are easy to track during patching. The input-output pairs are extracted from the model vocabulary under constraints that make both the lowercase input and capitalized output single-token words.
 
-- Empty tokenizer pieces are filtered.
-- Tokens with empty body after removing Ġ are filtered.
-- The word body must start with a lowercase alphabetic letter.
-- The capitalized token must also exist in the tokenizer vocabulary.
-- Input must match ^[a-z]+$.
-- Output must match ^[A-Z][a-z]+$.
-- Input and output must each be at least 5 characters.
-- Output must equal input.capitalize().
-- Input must be in the English frequency word list.
-- Input must tokenize to exactly one token without leading whitespace.
-- Output must tokenize to exactly one token without leading whitespace.
-- Input with leading whitespace must tokenize to exactly one token.
-- Output with leading whitespace must tokenize to exactly one token.
-- Duplicate (input, output) pairs are filtered.
+The filtering conditions are:
+
+- Empty tokenizer pieces are removed.
+- Tokens with empty bodies after removing `Ġ` are removed.
+- The input word must start with a lowercase alphabetic character.
+- The corresponding capitalized token must exist in the tokenizer vocabulary.
+- The input must match `^[a-z]+$`.
+- The output must match `^[A-Z][a-z]+$`.
+- The input and output must each contain at least 5 characters.
+- The output must equal `input.capitalize()`.
+- The input must appear in an English frequency word list.
+- The input must tokenize to exactly one token without leading whitespace.
+- The output must tokenize to exactly one token without leading whitespace.
+- The input with leading whitespace must tokenize to exactly one token.
+- The output with leading whitespace must tokenize to exactly one token.
+- Duplicate `(input, output)` pairs are removed.
 
 ### 3. Activation Patching
 
-Following the ARENA tutorial 1.4, activation patching is conducted for `resid_pre`, `block_every`, `attn_head_out_all_pos`, `attn_head_out_last_pos`, and `attn_head_all_pos_every`. Activation patching is conducted by patching counterfacutal prompts and calculating the logit difference of the answer tokens of interest. For example, with the same exemplars in a prompt, there are two prompts of different queries. In this experiment, the goal is to see the logit difference between the original query and the counterfacutal query. I call this as clean and corrupt prompt following the convention, although the prompts are symmetric. After patching, outputs of the model, logit, will be projected into the difference vector, which is the difference direction between the corrupt token and the clean token. Projecting an activation into the difference vector is the same as projecting to each of the direction and take the differece.
+Following ARENA tutorial 1.4, I run activation patching over several activation types: `resid_pre`, `block_every`, `attn_head_out_all_pos`, `attn_head_out_last_pos`, and `attn_head_all_pos_every`.
 
-Here are brief explanations of the experiments.
+For each patching experiment, I construct a clean prompt and a counterfactual prompt. The two prompts share the same in-context examples but use different queries. The goal is to measure how much patching a component from the clean run into the counterfactual run shifts the model toward the clean answer. Here, I used $|N|=200$ prompts.
+
+The patching effect is measured with the logit difference between the clean answer token and the counterfactual answer token. Equivalently, the model output is projected onto the difference direction between these two answer tokens.
+
+The patching settings are:
 
 - resid_pre: patch the residual stream before each transformer block.
-- block_every: patch each major block component: residual stream, attention output, and MLP output.
+- block_every: patch each major block component, including the residual stream, attention output, and MLP output.
 - attn_head_out_all_pos: patch each attention head output across all token positions.
 - attn_head_out_last_pos: patch each attention head output only at the final token position.
 - attn_head_all_pos_every: patch each attention head’s output, query, key, value, and attention pattern across all token positions.
 
 ### 4. Validation
 
-After identifying causally important attention heads, the next step must be validating if the head are actually important in the held-out data. So the data that are not used in the activation patching are used for validation. Metrics for evaluating the heads are the following.
+After identifying causally important heads, I validate whether the same heads remain important on held-out data. The held-out data are not used during the initial activation patching analysis.
 
-head effect metric: $$m_i = \frac{1}{N}\sum_{i=1}^{N}\frac{\ell_i^{\mathrm{patched}}-\ell^{\mathrm{corrupt}}}  {\ell^{\mathrm{clean}}-\ell^{\mathrm{corrupt}}}$$
+I use two metrics to evaluate each head.
 
-head sign consistency metric: $$\frac{1}{N}\sum_{i=1}^{N} \mathbf{1}[m_i > 0]$$
+Head effect metric:
 
-## Implementation
+$$
+\frac{1}{N}\sum_{i=1}^{N}\frac{\ell_i^{\mathrm{patched}}-\ell^{\mathrm{corrupt}}}{\ell^{\mathrm{clean}}-\ell^{\mathrm{corrupt}}}
+$$
 
-The implementation is available **[here](TODO_REPOSITORY_URL)**.
+Head sign consistency metric:
 
-Summarize the main implementation choices. Mention libraries such as `TransformerLens`, `nnsight`, or custom hooks only if they are actually used. Include any compute limitations that affect the scope of the experiment.
+$$
+\frac{1}{N}\sum_{i=1}^{N} \mathbf{1}[m_i > 0],
+\quad \text{where } m_i \text{ is the head effect metric for data point } i
+$$
 
 ## Results
 
-### Attention visualization
+### Attention Patching
 
-Introduce the main attention heatmap or head-level visualization.
-
-<div style="display: flex; justify-content: center; margin: 1.5rem 0;">
-  <div style="max-width: 680px; width: 100%; display: flex; flex-direction: column;">
-    <img
-      src="/assets/img/template_error.png"
-      alt="Attention pattern visualization"
-      style="max-width: 100%; width: 100%; height: auto;"
-    >
-    <p style="margin-top: 0.5rem; font-size: 0.9em; color: var(--global-text-color-light);">TODO: Caption explaining the model, layer, head, token positions, and condition shown in the figure.</p>
-  </div>
-</div>
+Here, the results of 3-shot patching are presented.
 
 Describe the qualitative pattern shown in the figure. State whether it appears consistently across examples or only under a narrow condition.
 
