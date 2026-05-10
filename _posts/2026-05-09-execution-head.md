@@ -5,7 +5,7 @@ date: 2026-05-09
 description: Research notes on identifying and interpreting query-conditioned attention heads in transformer language models.
 tags: mechanistic-interpretability attention-heads circuit-tracing
 categories: exploratory
-thumbnail: /assets/img/template_error.png
+thumbnail: /assets/img/execution-head/thumnail.png
 ---
 
 Note: This post is temporarily uploaded for code rendering tests.
@@ -171,14 +171,16 @@ L27H02 looks the most important! Maybe this is the reason that the 27_attn_out s
   <iframe
     src="/assets/html/execution-head/paired_flip_logit_diff.html"
     title="Paired flip logit difference"
-    style="flex: 1 1 420px; min-width: 0; height: 620px; border: 0;"
+    style="flex: 1 1 420px; min-width: 0; height: 520px; border: 0;"
     loading="lazy"
+    scrolling="no"
   ></iframe>
   <iframe
     src="/assets/html/execution-head/paired_static_logit_diff.html"
     title="Paired static logit difference"
-    style="flex: 1 1 420px; min-width: 0; height: 620px; border: 0;"
+    style="flex: 1 1 420px; min-width: 0; height: 520px; border: 0;"
     loading="lazy"
+    scrolling="no"
   ></iframe>
 </div>
 
