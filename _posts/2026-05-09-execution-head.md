@@ -5,7 +5,7 @@ date: 2026-05-09
 description: Research notes on identifying and interpreting query-conditioned attention heads in transformer language models.
 tags: mechanistic-interpretability attention-heads circuit-tracing
 categories: exploratory
-thumbnail: /assets/img/execution-head/thumnail.png
+thumbnail: /assets/img/execution-head/thumbnail.png
 ---
 
 Note: This post is temporarily uploaded for code rendering tests.
@@ -14,12 +14,21 @@ Note: This post is temporarily uploaded for code rendering tests.
 
 If there are attention heads that execute a mapping by combining a task vector and a query, their behavior should not be fixed to a single answer. When the task context is fixed but the query changes, such heads should shape the model’s prediction based on the query. Conversely, when the query is fixed, changing the strength of the task signal, such as by varying the number of examples, should affect how strongly the task mapping is applied. To identify these execution-head candidates, I used logit attribution and activation patching to trace which heads influence the final prediction. The results reveal a set of heads that respond sensitively to query changes, making them promising candidates for further analysis of task execution in in-context learning.
 
-
 ## Motivation
 
-Task Vectors and Function Vectors suggest that a task, or function, can be represented by a compact vector inside a language model. However, these vectors often fail to generalize across prompt formats. This raises several questions: what information do these vectors contain, how are they constructed, and under what conditions do they successfully induce a specific function? 
+Task Vectors and Function Vectors suggest that a task, or function, can be represented by a compact vector inside a language model. However, these vectors often fail to generalize across prompt formats. This raises several questions: what information do these vectors contain, how are they constructed, and under what conditions do they successfully induce a specific function?
 
 On the other hand, in the IOI paper, the authors identify a circuit by investigating attention heads' inputs and outputs and explaining how information is read, combined, and routed to the final output from a head-level perspective. This attention-head-based view is helpful for identifying the mechanisms of attention heads and allows us to gain a more fine-grained understanding of their roles.
+
+<div style="display: flex; justify-content: center; margin: 1.5rem 0;">
+  <img
+    src="/assets/img/execution-head/thumbnail.png"
+    alt="Conceptual diagram of execution heads using task context and query inputs"
+    style="max-width: 100%; width: 900px; height: auto;"
+  >
+</div>
+
+In panel (a), the same task representation $\theta(S)$ and query $x_1$ are combined by the execution heads to produce $y_1$. In panel (b), the task representation is unchanged, but the query changes to $x_2$, so the output should change to $y_2$. In panel (c), replacing the query information tests whether the heads are truly query-sensitive rather than only carrying a fixed answer preference.
 
 This view provides a starting point for investigating which heads are responsible for executing a mapping from the query and task context to the correct response, and how they do so. In this post, I investigate the existence of such execution-head candidates in in-context learning.
 
@@ -70,7 +79,7 @@ The filtering conditions are:
 
 ### 3. Logit Attribution
 
-Logit attribution is a convenient way to evaluate a component's output. It projects a component's output onto the difference between the unembedding vectors of the tokens of interest. By doing this, we can measure how much the output supports one answer token over the other. In this experiment, the attribution effect is measured by projecting the component's output onto the difference direction between the clean answer token and the counterfactual answer token. 
+Logit attribution is a convenient way to evaluate a component's output. It projects a component's output onto the difference between the unembedding vectors of the tokens of interest. By doing this, we can measure how much the output supports one answer token over the other. In this experiment, the attribution effect is measured by projecting the component's output onto the difference direction between the clean answer token and the counterfactual answer token.
 
 I run logit attribution over three activation types: accumulated_resid, decompose_resid, and stack_head_results. In all cases, attribution is measured at the final token by projecting the relevant residual-stream contribution onto the correct-minus-incorrect logit direction.
 
@@ -184,15 +193,10 @@ L27H02 looks the most important! Maybe this is the reason that the 27_attn_out s
   ></iframe>
 </div>
 
-
 ### 3. Activation Patching
 
 ### 4. Validation on Held-Out Data
 
-
-
 ## Interpretation
-
-
 
 ## Limitations
