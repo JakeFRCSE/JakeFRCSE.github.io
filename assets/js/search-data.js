@@ -37,15 +37,15 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-emergent-attention-pattern",
+        },{id: "post-tracing-query-conditioned-attention-heads-in-in-context-learning",
         
-          title: "Emergent Attention Pattern",
+          title: "Tracing Query-Conditioned Attention Heads in In-Context Learning",
         
-        description: "Research notes on identifying and interpreting emergent attention patterns in transformer language models.",
+        description: "Research notes on identifying and interpreting query-conditioned attention heads in transformer language models.",
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2026/Emergent-Attention-Pattern/";
+            window.location.href = "/blog/2026/execution-head/";
           
         },
       },{id: "post-zero-shot-inference-and-relation-vectors",
