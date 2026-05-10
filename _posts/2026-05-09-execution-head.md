@@ -8,17 +8,15 @@ categories: exploratory
 thumbnail: /assets/img/execution-head/thumbnail.png
 ---
 
-Note: This post is temporarily uploaded for code rendering tests.
-
 ## TL;DR
 
 If there are attention heads that execute a mapping by combining a task vector and a query, their behavior should not be fixed to a single answer. When the task context is fixed but the query changes, such heads should shape the model’s prediction based on the query. Conversely, when the query is fixed, changing the strength of the task signal, such as by varying the number of examples, should affect how strongly the task mapping is applied. To identify these execution-head candidates, I used logit attribution and activation patching to trace which heads influence the final prediction. The results reveal a set of heads that respond sensitively to query changes, making them promising candidates for further analysis of task execution in in-context learning.
 
 ## Motivation
 
-Task Vectors and Function Vectors suggest that a task, or function, can be represented by a compact vector inside a language model. However, these vectors often fail to generalize across prompt formats. This raises several questions: what information do these vectors contain, how are they constructed, and under what conditions do they successfully induce a specific function?
+[Task Vectors](https://arxiv.org/pdf/2310.15916) and [Function Vectors](https://arxiv.org/pdf/2310.15213) suggest that a task, or function, can be represented by a compact vector inside a language model. However, these vectors often fail to generalize across prompt formats. This raises several questions: what information do these vectors contain, how are they constructed, and under what conditions do they successfully induce a specific function?
 
-On the other hand, in the IOI paper, the authors identify a circuit by investigating attention heads' inputs and outputs and explaining how information is read, combined, and routed to the final output from a head-level perspective. This attention-head-based view is helpful for identifying the mechanisms of attention heads and allows us to gain a more fine-grained understanding of their roles.
+On the other hand, in the [IOI paper](https://arxiv.org/pdf/2211.00593), the authors identify a circuit by investigating attention heads' inputs and outputs and explaining how information is read, combined, and routed to the final output from a head-level perspective. This attention-head-based view is helpful for identifying the mechanisms of attention heads and allows us to gain a more fine-grained understanding of their roles.
 
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <img
@@ -41,7 +39,7 @@ Before searching for important heads, I first narrow down the relevant source of
 ### 1. Model and prompts
 
 - Model: `meta-llama/Llama-3.2-3B`, loaded in bfloat16 dtype to prevent OOM.
-- Prompt format: following the Function Vectors paper, I use the `Q:\nA:\n\n` format.
+- Prompt format: following the [Function Vectors paper](https://arxiv.org/pdf/2310.15213), I use the `Q:\nA:\n\n` format.
 - Number of examples: `0`, `1`, `2`, `3`, `4`, and `5`.
 
 To make the n-shot settings comparable, I use the same query examples across different numbers of shots. The in-context examples are also constructed from the same ordered pool, so that the 0-shot through 5-shot prompts can be compared as progressively longer prefixes of the same example sequence. Counterfactual prompts are constructed by pairing prompts that share the same in-context examples but use different queries.
@@ -58,7 +56,7 @@ Here is an example comparing a 1-shot prompt and a 2-shot prompt.
 
 ### 2. Dataset
 
-Following the IOI circuit paper, I design the dataset so that token positions are easy to track during patching. The input-output pairs are extracted from the model vocabulary under constraints that make both the lowercase input and the capitalized output single-token words, so that the patching experiment can be conducted without having to worry about varying final-token positions.
+Following the [IOI circuit paper](https://arxiv.org/pdf/2211.00593), I design the dataset so that token positions are easy to track during patching. The input-output pairs are extracted from the model vocabulary under constraints that make both the lowercase input and the capitalized output single-token words, so that the patching experiment can be conducted without having to worry about varying final-token positions.
 
 The filtering conditions are:
 
@@ -257,9 +255,9 @@ In particular, L27H02 consistently shows the largest effect across all n-shot se
 
 In this post, I aimed to investigate the conditions under which a task vector is executed by searching for attention heads that implement a mapping of the form: task vector + query input → output. The basic assumption is that if a component has a large causal effect under activation patching, then it may contain information that is important for producing the query-dependent answer. Under this view, I identified L27H02 as the head with the largest contribution across several analyses.
 
-However, the current results only show that this head is important for recovering the correct output. They do not yet explain what information the head receives, what information it writes to the residual stream, or how this information is routed through the model. To answer these questions, a more detailed circuit analysis is needed. One possible direction is to follow the IOI paper and examine the representations read and written by the head using projections onto relevant unembedding directions. Another direction is to use path patching to trace how information flows from earlier components to this head and then to the final prediction.
+However, the current results only show that this head is important for recovering the correct output. They do not yet explain what information the head receives, what information it writes to the residual stream, or how this information is routed through the model. To answer these questions, a more detailed circuit analysis is needed. One possible direction is to follow the [IOI paper](https://arxiv.org/pdf/2211.00593) and examine the representations read and written by the head using projections onto relevant unembedding directions. Another direction is to use path patching to trace how information flows from earlier components to this head and then to the final prediction.
 
-If this analysis reveals how query information and task-context information are combined and routed, it may shed light on what information Function Vectors or Task Vectors actually contain. In particular, it may help explain why injecting such vectors can sometimes recover task behavior even in zero-shot inference, and under what conditions such interventions succeed or fail.
+If this analysis reveals how query information and task-context information are combined and routed, it may shed light on what information [Function Vectors](https://arxiv.org/pdf/2310.15213) or [Task Vectors](https://arxiv.org/pdf/2310.15916) actually contain. In particular, it may help explain why injecting such vectors can sometimes recover task behavior even in zero-shot inference, and under what conditions such interventions succeed or fail.
 
 ## Additional Notes
 
@@ -275,3 +273,9 @@ In the 2-shot setting, the average attention patterns of the top 10 heads with t
 </div>
 
 Interestingly, L27H02 strongly attends to its own position. This suggests a possible hypothesis: L27H02 may read information already present in the residual stream at the final token, rather than directly copying information from another token position. I leave a more detailed investigation of these heads for future work.
+
+## References
+
+- Roee Hendel, Mor Geva, and Amir Globerson. [In-Context Learning Creates Task Vectors](https://arxiv.org/pdf/2310.15916). arXiv:2310.15916, 2023.
+- Eric Todd, Millicent L. Li, Arnab Sen Sharma, Aaron Mueller, Byron C. Wallace, and David Bau. [Function Vectors in Large Language Models](https://arxiv.org/pdf/2310.15213). ICLR 2024.
+- Kevin Wang, Alexandre Variengien, Arthur Conmy, Buck Shlegeris, and Jacob Steinhardt. [Interpretability in the Wild: A Circuit for Indirect Object Identification in GPT-2 Small](https://arxiv.org/pdf/2211.00593). arXiv:2211.00593, 2022.
