@@ -28,7 +28,7 @@ On the other hand, in the IOI paper, the authors identify a circuit by investiga
   >
 </div>
 
-In panel (a), the same task representation $\theta(S)$ and query $x_1$ are combined by the execution heads to produce $y_1$. In panel (b), the task representation is unchanged, but the query changes to $x_2$, so the output should change to $y_2$. In panel (c), replacing the query information tests whether the heads are truly query-sensitive rather than only carrying a fixed answer preference.
+In (a), the same task representation $\theta(S)$ and query $x_1$ are combined by the execution heads to produce $y_1$. In (b), the task representation is unchanged, but the query changes to $x_2$, so the output should change to $y_2$. In (c), replacing the query information tests whether the heads are truly query-sensitive rather than only carrying a fixed answer preference.
 
 This view provides a starting point for investigating which heads are responsible for executing a mapping from the query and task context to the correct response, and how they do so. In this post, I investigate the existence of such execution-head candidates in in-context learning.
 
@@ -103,15 +103,12 @@ $$
 
 where $\ell^{\mathrm{clean}}$, $\ell^{\mathrm{counterfactual}}$, and $\ell_i^{\mathrm{patched}}$ denote the logit difference between the clean answer token and the counterfactual answer token in the clean, counterfactual, and patched runs, respectively. A score close to 1 indicates that patching the component largely recovers the clean behavior, while a score close to 0 indicates little causal effect.
 
-I run activation patching over several activation types: `resid_pre`, `block_every`, `attn_head_out_all_pos`, `attn_head_out_last_pos`, and `attn_head_all_pos_every`.
+I run activation patching over several activation types: `resid_pre` and `attn_head_out_last_pos`.
 
 The patching settings are:
 
 - `resid_pre`: patch the residual stream before each transformer block.
-- `block_every`: patch each major block component, including the residual stream, attention output, and MLP output.
-- `attn_head_out_all_pos`: patch each attention head output across all token positions.
 - `attn_head_out_last_pos`: patch each attention head output only at the final token position.
-- `attn_head_all_pos_every`: patch each attention head’s output, query, key, value, and attention pattern across all token positions.
 
 ### 5. Validation
 
@@ -129,11 +126,11 @@ After identifying causally important heads, I validate whether the same heads re
   >
 </div>
 
-While the accuracy saturates at the 2-shot setting, the average logit diff keeps increasing.
+The accuracy already saturates at the 2-shot setting, but the average logit difference continues to increase with more examples.
 
 ### 2. Logit Attribution
 
-Here, I present the results of 5-shot setting because the logit diff is the highest and possibly shows the most robust figures.
+Here, I present the results for the 5-shot setting because the logit difference is largest in this setting and therefore may show the most robust patterns.
 
 - `accumulated_resid`
 
@@ -146,7 +143,7 @@ Here, I present the results of 5-shot setting because the logit diff is the high
   ></iframe>
 </div>
 
-Hmm... The logit diff keeps increasing, starting from the layer 13. But it's still hard to tell which layer is the most important for the logit diff. Let's see `decompose_resid`.
+Hmm... The logit difference begins to increase from layer 13. However, it is still hard to tell which layer contributes most strongly to the logit difference. To examine this more directly, I next look at `decompose_resid`.
 
 - `decompose_resid`
 
@@ -159,7 +156,7 @@ Hmm... The logit diff keeps increasing, starting from the layer 13. But it's sti
   ></iframe>
 </div>
 
-Here, we can see that the 27_attn_out have the biggest logit diff! Also, overally, attn_outs are bigger than mlp_outs.
+Here, we can see that 27_attn_out has the largest logit difference. Overall, the attention outputs contribute more strongly than the MLP outputs. This suggests that the main prediction-shaping signal is more concentrated in attention outputs than in MLP outputs, motivating a head-level analysis.
 
 - `stack_head_results`
 
@@ -172,7 +169,7 @@ Here, we can see that the 27_attn_out have the biggest logit diff! Also, overall
   ></iframe>
 </div>
 
-L27H02 looks the most important! Maybe this is the reason that the 27_attn_out showed the biggest logit diff. This time, let's find if the head is sensitive to the query change.
+L27H02 appears to be the most important head. This may explain why 27_attn_out showed the largest logit difference in the decomposed residual analysis. Next, I examine whether this head is sensitive to changes in the query.
 
 - `paired_flip_logit_diff` and `paired_static_logit_diff`
 
@@ -193,10 +190,88 @@ L27H02 looks the most important! Maybe this is the reason that the 27_attn_out s
   ></iframe>
 </div>
 
+L27H02 shows a large paired flip logit difference, suggesting that this head is sensitive to the query. Although the paired static logit difference may also look large at first glance, its scale is much smaller than that of the flip logit difference.
+
 ### 3. Activation Patching
+
+In this section, I present the results for the 2-shot setting. This setting is a reasonable choice because the computational cost is moderate while the model already achieves perfect accuracy. I start with `resid_pre` patching.
+
+- `resid_pre`
+
+<div style="display: flex; justify-content: center; margin: 1.5rem 0;">
+  <iframe
+    src="/assets/html/execution-head/2-shot/act_patch_resid_pre.html"
+    title="2-shot resid_pre activation patching"
+    style="width: 100%; max-width: 1000px; height: 620px; border: 0;"
+    loading="lazy"
+  ></iframe>
+</div>
+
+Thanks to the controlled prompt format and dataset design, the patching results are easy to interpret. Position 19 corresponds to the query input position, that is, the input word of the query whose mapping should be executed. Position 22 corresponds to the final token position.
+
+In the previous section, attention heads in layer 27 showed the largest logit differences. However, the resid_pre patching results suggest that query information is first localized at the query input position and later appears at the final token position. This suggests that some heads may act as query-information movers, transferring information from the query token into the residual stream at the final token.
+
+If such heads write query information into the final token residual stream, then it becomes plausible to search for execution-head candidates among the heads operating at the final token position. Therefore, I next examine attention-head output patching at the final token.
+
+- `attn_head_out_last_pos`
+
+<div style="display: flex; justify-content: center; margin: 1.5rem 0;">
+  <iframe
+    src="/assets/html/execution-head/2-shot/act_patch_attn_head_out_last_pos.html"
+    title="2-shot attn_head_out_last_pos activation patching"
+    style="width: 100%; max-width: 1000px; height: 620px; border: 0;"
+    loading="lazy"
+  ></iframe>
+</div>
+
+Even in the 2-shot setting, L27H02 remains the most important head in the final-token attention-head output patching experiment. This is consistent with the logit attribution result from the 5-shot setting, suggesting that L27H02 is not only strongly correlated with the correct logit direction but also causally important for recovering the clean prediction.
 
 ### 4. Validation on Held-Out Data
 
-## Interpretation
+To test whether the identified heads are important by chance, I validate them on held-out data. I select 10 heads from each group based on the patching score: the top 10 heads, the bottom 10 heads, and 10 random heads. The table below shows the average patching effect for each group.
 
-## Limitations
+| n-shot | Positive mean `average_metric` | Random mean `average_metric` | Negative mean `average_metric` | 
+|---:|---:|---:|---:|
+| 0 | 0.035395 | -0.000947 | -0.021785 |
+| 1 | 0.041080 | -0.000389 | -0.017664 |
+| 2 | 0.039074 | 0.000275 | -0.014328 |
+| 3 | 0.039596 | 0.001791 | -0.012629 |
+| 4 | 0.038977 | 0.000756 | -0.013414 |
+| 5 | 0.038947 | 0.000771 | -0.013131 |
+
+Across all n-shot settings, the positive heads consistently show a positive average patching effect, while the random heads stay close to zero and the negative heads show negative effects. This suggests that the identified positive and negative heads are not artifacts of the dataset, but capture reproducible causal effects on held-out prompts.
+
+In particular, L27H02 consistently shows the largest effect across all n-shot settings.
+
+| n-shot | Positive validation | Random validation | Negative validation |
+|---:|---|---|---|
+| 0 | L27H02 (`0.080117`) | L22H04 (`0.011895`) | L27H07 (`-0.010273`) |
+| 1 | L27H02 (`0.119355`) | L22H04 (`0.011914`) | L19H02 (`-0.011602`) |
+| 2 | L27H02 (`0.112461`) | L22H04 (`0.013008`) | L27H17 (`-0.006738`) |
+| 3 | L27H02 (`0.111094`) | L22H04 (`0.014687`) | L27H17 (`-0.004414`) |
+| 4 | L27H02 (`0.111348`) | L22H04 (`0.013887`) | L27H17 (`-0.004395`) |
+| 5 | L27H02 (`0.111973`) | L22H04 (`0.013555`) | L27H17 (`-0.004141`) |
+
+
+## Discussion
+
+In this post, I aimed to investigate the conditions under which a task vector is executed by searching for attention heads that implement a mapping of the form: task vector + query input → output. The basic assumption is that if a component has a large causal effect under activation patching, then it may contain information that is important for producing the query-dependent answer. Under this view, I identified L27H02 as the head with the largest contribution across several analyses.
+
+However, the current results only show that this head is important for recovering the correct output. They do not yet explain what information the head receives, what information it writes to the residual stream, or how this information is routed through the model. To answer these questions, a more detailed circuit analysis is needed. One possible direction is to follow the IOI paper and examine the representations read and written by the head using projections onto relevant unembedding directions. Another direction is to use path patching to trace how information flows from earlier components to this head and then to the final prediction.
+
+If this analysis reveals how query information and task-context information are combined and routed, it may shed light on what information Function Vectors or Task Vectors actually contain. In particular, it may help explain why injecting such vectors can sometimes recover task behavior even in zero-shot inference, and under what conditions such interventions succeed or fail.
+
+## Additional Notes
+
+In the 2-shot setting, the average attention patterns of the top 10 heads with the largest patching effects are shown below. 
+
+<div style="display: flex; justify-content: center; margin: 1.5rem 0;">
+  <iframe
+    src="/assets/html/execution-head/2-shot/top_positive_attention.html"
+    title="2-shot top positive attention heads"
+    style="width: 100%; max-width: 1000px; height: 760px; border: 0;"
+    loading="lazy"
+  ></iframe>
+</div>
+
+Interestingly, L27H02 strongly attends to its own position. This suggests a possible hypothesis: L27H02 may read information already present in the residual stream at the final token, rather than directly copying information from another token position. I leave a more detailed investigation of these heads for future work.
