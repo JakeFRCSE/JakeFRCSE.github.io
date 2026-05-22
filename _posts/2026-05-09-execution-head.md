@@ -96,7 +96,7 @@ Activation patching is a way to evaluate whether a component is causally importa
 The patching effect is computed as:
 
 $$
-\frac{\ell_i^{\mathrm{patched}}-\ell^{\mathrm{counterfactual}}}{\ell^{\mathrm{clean}}-\ell^{\mathrm{counterfactual}}}
+\frac{\ell^{\mathrm{patched}}-\ell^{\mathrm{counterfactual}}}{\ell^{\mathrm{clean}}-\ell^{\mathrm{counterfactual}}}
 $$
 
 where $\ell^{\mathrm{clean}}$, $\ell^{\mathrm{counterfactual}}$, and $\ell_i^{\mathrm{patched}}$ denote the logit difference between the clean answer token and the counterfactual answer token in the clean, counterfactual, and patched runs, respectively. A score close to 1 indicates that patching the component largely recovers the clean behavior, while a score close to 0 indicates little causal effect.
@@ -228,28 +228,27 @@ Even in the 2-shot setting, L27H02 remains the most important head in the final-
 
 To test whether the identified heads are important by chance, I validate them on held-out data. I select 10 heads from each group based on the patching score: the top 10 heads, the bottom 10 heads, and 10 random heads. The table below shows the average patching effect for each group.
 
-| n-shot | Positive mean `average_metric` | Random mean `average_metric` | Negative mean `average_metric` | 
-|---:|---:|---:|---:|
-| 0 | 0.035395 | -0.000947 | -0.021785 |
-| 1 | 0.041080 | -0.000389 | -0.017664 |
-| 2 | 0.039074 | 0.000275 | -0.014328 |
-| 3 | 0.039596 | 0.001791 | -0.012629 |
-| 4 | 0.038977 | 0.000756 | -0.013414 |
-| 5 | 0.038947 | 0.000771 | -0.013131 |
+| n-shot | Positive mean `average_metric` | Random mean `average_metric` | Negative mean `average_metric` |
+| -----: | -----------------------------: | ---------------------------: | -----------------------------: |
+|      0 |                       0.035395 |                    -0.000947 |                      -0.021785 |
+|      1 |                       0.041080 |                    -0.000389 |                      -0.017664 |
+|      2 |                       0.039074 |                     0.000275 |                      -0.014328 |
+|      3 |                       0.039596 |                     0.001791 |                      -0.012629 |
+|      4 |                       0.038977 |                     0.000756 |                      -0.013414 |
+|      5 |                       0.038947 |                     0.000771 |                      -0.013131 |
 
 Across all n-shot settings, the positive heads consistently show a positive average patching effect, while the random heads stay close to zero and the negative heads show negative effects. This suggests that the identified positive and negative heads are not artifacts of the dataset, but capture reproducible causal effects on held-out prompts.
 
 In particular, L27H02 consistently shows the largest effect across all n-shot settings.
 
-| n-shot | Positive validation | Random validation | Negative validation |
-|---:|---|---|---|
-| 0 | L27H02 (`0.080117`) | L22H04 (`0.011895`) | L27H07 (`-0.010273`) |
-| 1 | L27H02 (`0.119355`) | L22H04 (`0.011914`) | L19H02 (`-0.011602`) |
-| 2 | L27H02 (`0.112461`) | L22H04 (`0.013008`) | L27H17 (`-0.006738`) |
-| 3 | L27H02 (`0.111094`) | L22H04 (`0.014687`) | L27H17 (`-0.004414`) |
-| 4 | L27H02 (`0.111348`) | L22H04 (`0.013887`) | L27H17 (`-0.004395`) |
-| 5 | L27H02 (`0.111973`) | L22H04 (`0.013555`) | L27H17 (`-0.004141`) |
-
+| n-shot | Positive validation | Random validation   | Negative validation  |
+| -----: | ------------------- | ------------------- | -------------------- |
+|      0 | L27H02 (`0.080117`) | L22H04 (`0.011895`) | L27H07 (`-0.010273`) |
+|      1 | L27H02 (`0.119355`) | L22H04 (`0.011914`) | L19H02 (`-0.011602`) |
+|      2 | L27H02 (`0.112461`) | L22H04 (`0.013008`) | L27H17 (`-0.006738`) |
+|      3 | L27H02 (`0.111094`) | L22H04 (`0.014687`) | L27H17 (`-0.004414`) |
+|      4 | L27H02 (`0.111348`) | L22H04 (`0.013887`) | L27H17 (`-0.004395`) |
+|      5 | L27H02 (`0.111973`) | L22H04 (`0.013555`) | L27H17 (`-0.004141`) |
 
 ## Discussion
 
@@ -261,7 +260,7 @@ If this analysis reveals how query information and task-context information are 
 
 ## Additional Notes
 
-In the 2-shot setting, the average attention patterns of the top 10 heads with the largest patching effects are shown below. 
+In the 2-shot setting, the average attention patterns of the top 10 heads with the largest patching effects are shown below.
 
 <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
   <iframe
