@@ -5,6 +5,7 @@ github_users:
 repo_description_lines_max: 2
 
 github_repos:
+  - JakeFRCSE/execution-head
   - JakeFRCSE/zero-shot_inference
   - JakeFRCSE/geometry-of-truth-reproduction
   - JakeFRCSE/refusal-direction-reproduction

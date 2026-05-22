@@ -12,6 +12,8 @@ thumbnail: /assets/img/execution-head/thumbnail.png
 
 If there are attention heads that execute a mapping by combining a task vector and a query, their behavior should not be fixed to a single answer. When the task context is fixed but the query changes, such heads should shape the model’s prediction based on the query. Conversely, when the query is fixed, changing the strength of the task signal, such as by varying the number of examples, should affect how strongly the task mapping is applied. To identify these execution-head candidates, I used logit attribution and activation patching to trace which heads influence the final prediction. The results reveal a set of heads that respond sensitively to query changes, making them promising candidates for further analysis of task execution in in-context learning.
 
+The implementation is available **[here](https://github.com/JakeFRCSE/execution-head)**.
+
 ## Motivation
 
 [Task Vectors](https://arxiv.org/pdf/2310.15916) and [Function Vectors](https://arxiv.org/pdf/2310.15213) suggest that a task, or function, can be represented by a compact vector inside a language model. However, these vectors often fail to generalize across prompt formats. This raises several questions: what information do these vectors contain, how are they constructed, and under what conditions do they successfully induce a specific function?
