@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-I'm joining [MLAI Lab@Yonsei](https://mlai.yonsei.ac.kr/home) as a research intern!
+I'm joining **[MLAI Lab@Yonsei](https://mlai.yonsei.ac.kr/home)** as a research intern!
