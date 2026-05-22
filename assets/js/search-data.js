@@ -92,7 +92,12 @@ ninja.data = [{
           section: "News",},{id: "news-i-m-joining-mlai-lab-yonsei-as-a-research-intern",
           title: 'I’m joining MLAI Lab@Yonsei as a research intern!',
           description: "",
-          section: "News",},{id: "projects-geometry-of-truth-in-llms",
+          section: "News",},{id: "projects-query-conditioned-execution-heads",
+          title: 'Query-Conditioned Execution Heads',
+          description: "Investigating attention heads that combine task context and query information during in-context learning.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/execution-head/";
+            },},{id: "projects-geometry-of-truth-in-llms",
           title: 'Geometry of Truth in LLMs',
           description: "Notes on reproducing “Geometry of Truth” with causal intervention and visualization.",
           section: "Projects",handler: () => {
