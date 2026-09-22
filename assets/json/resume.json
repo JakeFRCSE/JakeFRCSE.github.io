@@ -4,7 +4,7 @@
     "image": "",
     "email": "eppi001004@gmail.com",
     "location": {
-      "city": "Gunsan",
+      "city": "Seoul",
       "region": "South Korea",
       "countryCode": "KR"
     },
@@ -17,7 +17,7 @@
       "location": "Seoul, South Korea",
       "startDate": "2026-06",
       "endDate": "Current",
-      "summary": "TBD",
+      "summary": "Researching natural language descriptions of LLM internal activations",
       "highlights": ["Advised by Prof. Kyungwoo Song"]
     },
     {
