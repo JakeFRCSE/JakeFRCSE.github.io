@@ -75,6 +75,12 @@
             </h6>
           {% endif %}
 
+          {% if entry.authors %}
+            <h6 class="authors ml-1 ml-md-4">
+              {{ entry.authors | markdownify | remove: '<p>' | remove: '</p>' }}
+            </h6>
+          {% endif %}
+
           {% if entry.highlights %}
             <ul class="items">
               {% for item in entry.highlights %}
