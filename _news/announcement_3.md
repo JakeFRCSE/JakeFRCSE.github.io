@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-One paper has been accepted to **Findings of EMNLP 2026**!
+One paper has been accepted to **[Findings of EMNLP 2026](https://aclanthology.org/2026.findings-emnlp.1746/)**!
